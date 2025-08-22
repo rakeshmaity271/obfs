@@ -239,6 +239,7 @@ php artisan obfuscate:license info
 # Generate custom license keys
 php artisan obfuscate:generate-license demo --days=30 --files=10 --size=1
 php artisan obfuscate:generate-license pro --days=365 --files=0 --size=0 --customer="Your Company"
+php artisan obfuscate:generate-license pro --days=0 --files=0 --size=0 --customer="Unlimited License"
 ```
 
 ## Notes

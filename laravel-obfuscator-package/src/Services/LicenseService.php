@@ -188,13 +188,17 @@ class LicenseService
         $timestamp = (int) $parts[1];
         $currentTime = time();
         
-        // Check if key is expired
-        if ($timestamp < $currentTime) {
+        // Check if key is expired (0 means unlimited/never expires)
+        if ($timestamp > 0 && $timestamp < $currentTime) {
             return null; // Expired
         }
 
-        // Calculate days left
-        $daysLeft = ceil(($timestamp - $currentTime) / (24 * 60 * 60));
+        // Calculate days left (0 means unlimited)
+        if ($timestamp > 0) {
+            $daysLeft = ceil(($timestamp - $currentTime) / (24 * 60 * 60));
+        } else {
+            $daysLeft = -1; // Unlimited
+        }
         
         // Generate license data based on plan
         switch ($plan) {
@@ -202,7 +206,7 @@ class LicenseService
                 return [
                     'customer' => 'Generated Demo User',
                     'plan' => 'Demo',
-                    'expires_at' => $timestamp,
+                    'expires_at' => $timestamp > 0 ? $timestamp : null,
                     'features' => ['basic_obfuscation', 'deobfuscation'],
                     'max_files' => 10,
                     'max_file_size' => 1024 * 1024, // 1MB
@@ -212,7 +216,7 @@ class LicenseService
                 return [
                     'customer' => 'Generated Trial User',
                     'plan' => 'Trial',
-                    'expires_at' => $timestamp,
+                    'expires_at' => $timestamp > 0 ? $timestamp : null,
                     'features' => ['basic_obfuscation', 'deobfuscation', 'advanced_obfuscation'],
                     'max_files' => 50,
                     'max_file_size' => 5 * 1024 * 1024, // 5MB
@@ -222,7 +226,7 @@ class LicenseService
                 return [
                     'customer' => 'Generated Pro User',
                     'plan' => 'Professional',
-                    'expires_at' => $timestamp,
+                    'expires_at' => $timestamp > 0 ? $timestamp : null,
                     'features' => ['basic_obfuscation', 'deobfuscation', 'advanced_obfuscation', 'enterprise_features'],
                     'max_files' => -1, // Unlimited
                     'max_file_size' => -1, // Unlimited
@@ -232,7 +236,7 @@ class LicenseService
                 return [
                     'customer' => 'Generated Custom User',
                     'plan' => 'Custom',
-                    'expires_at' => $timestamp,
+                    'expires_at' => $timestamp > 0 ? $timestamp : null,
                     'features' => ['basic_obfuscation', 'deobfuscation'],
                     'max_files' => 100,
                     'max_file_size' => 10 * 1024 * 1024, // 10MB
@@ -270,6 +274,11 @@ class LicenseService
         }
 
         $expiresAt = $this->licenseData['expires_at'] ?? 0;
+        
+        if ($expiresAt === null) {
+            return "✅ Valid (Unlimited - Never Expires)";
+        }
+        
         $daysLeft = ceil(($expiresAt - time()) / (24 * 60 * 60));
 
         if ($daysLeft <= 0) {

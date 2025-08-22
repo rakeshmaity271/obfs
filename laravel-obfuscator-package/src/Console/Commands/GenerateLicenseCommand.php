@@ -43,7 +43,11 @@ class GenerateLicenseCommand extends Command
         $licenseKey = $this->generateLicenseKey($plan, $days);
         
         // Calculate expiration
-        $expirationDate = date('Y-m-d H:i:s', time() + ($days * 24 * 60 * 60));
+        if ($days > 0) {
+            $expirationDate = date('Y-m-d H:i:s', time() + ($days * 24 * 60 * 60));
+        } else {
+            $expirationDate = 'Never (Unlimited)';
+        }
         
         // Get plan features
         $features = $this->getPlanFeatures($plan);
@@ -55,6 +59,11 @@ class GenerateLicenseCommand extends Command
         $this->info("Plan: " . ucfirst($plan));
         $this->info("Customer: {$customer}");
         $this->info("Expires: {$expirationDate}");
+        if ($days == 0) {
+            $this->info("Duration: Unlimited (Never Expires)");
+        } else {
+            $this->info("Duration: {$days} days");
+        }
         $this->info("Features: " . implode(', ', $features));
         $this->info("File Limit: " . ($maxFiles > 0 ? "{$maxFiles} files" : "Unlimited"));
         $this->info("Size Limit: " . ($maxSizeMB > 0 ? "{$maxSizeMB} MB" : "Unlimited"));
@@ -81,7 +90,12 @@ class GenerateLicenseCommand extends Command
      */
     private function generateLicenseKey(string $plan, int $days): string
     {
-        $timestamp = time() + ($days * 24 * 60 * 60);
+        if ($days > 0) {
+            $timestamp = time() + ($days * 24 * 60 * 60);
+        } else {
+            $timestamp = 0; // 0 means unlimited/never expires
+        }
+        
         $random = Str::random(8);
         
         return strtoupper($plan) . '-' . $timestamp . '-' . $random;
