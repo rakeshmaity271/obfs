@@ -1,0 +1,57 @@
+{
+    "name": "laravel-obfuscator/laravel-obfuscator",
+    "description": "A comprehensive Laravel package for PHP code obfuscation with backup and restore functionality. Provides the same command structure as mmanda/laravel-obfs with enhanced features.",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "laravel",
+        "obfuscation",
+        "php",
+        "security",
+        "code-protection",
+        "artisan",
+        "commands",
+        "backup",
+        "restore"
+    ],
+    "authors": [
+        {
+            "name": "Laravel Obfuscator Team",
+            "email": "info@laravel-obfuscator.com",
+            "homepage": "https://github.com/laravel-obfuscator"
+        }
+    ],
+    "require": {
+        "php": "^8.0|^8.1|^8.2|^8.3",
+        "laravel/framework": "^9.0|^10.0|^11.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^7.0|^8.0",
+        "phpunit/phpunit": "^9.0|^10.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "LaravelObfuscator\\LaravelObfuscator\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "LaravelObfuscator\\LaravelObfuscator\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "LaravelObfuscator\\LaravelObfuscator\\LaravelObfuscatorServiceProvider"
+            ],
+            "aliases": {
+                "Obfuscator": "LaravelObfuscator\\LaravelObfuscator\\Services\\ObfuscatorService"
+            }
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
