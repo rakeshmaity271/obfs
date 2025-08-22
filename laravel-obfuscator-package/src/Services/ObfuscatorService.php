@@ -4,14 +4,34 @@ namespace LaravelObfuscator\LaravelObfuscator\Services;
 
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use LaravelObfuscator\LaravelObfuscator\Services\LicenseService;
 
 class ObfuscatorService
 {
+    private LicenseService $licenseService;
+
+    public function __construct(LicenseService $licenseService)
+    {
+        $this->licenseService = $licenseService;
+    }
+
+    /**
+     * Check license before obfuscation
+     */
+    private function checkLicense(): void
+    {
+        if (!$this->licenseService->isValid()) {
+            throw new \Exception('Invalid or expired license. Please check your LaravelObfuscator license.');
+        }
+    }
+
     /**
      * Obfuscate a PHP code string
      */
     public function obfuscateString(string $sourceCode): string
     {
+        $this->checkLicense();
+        
         // Simple obfuscation: base64 encode and reverse
         $encoded = base64_encode($sourceCode);
         $reversed = strrev($encoded);
@@ -35,6 +55,8 @@ class ObfuscatorService
     public function obfuscateFile(string $inputFile, string $outputFile = null, string $level = 'basic', array $options = []): string
     {
         try {
+            $this->checkLicense();
+            
             if (!File::exists($inputFile)) {
                 throw new \Exception("Input file not found: {$inputFile}");
             }

@@ -31,6 +31,94 @@ class SimpleObfuscator
     }
     
     /**
+     * Deobfuscate a PHP file
+     */
+    public function deobfuscateFile($inputFile, $outputFile = null)
+    {
+        try {
+            if (!file_exists($inputFile)) {
+                throw new Exception("Input file not found: {$inputFile}");
+            }
+            
+            $obfuscatedCode = file_get_contents($inputFile);
+            
+            // Try to extract obfuscated content from wrapper
+            if (preg_match('/\$obfuscated = "([^"]+)";/', $obfuscatedCode, $matches)) {
+                $obfuscatedString = $matches[1];
+                $deobfuscatedCode = $this->deobfuscateString($obfuscatedString);
+            } else {
+                // Try direct deobfuscation if it's just the encoded string
+                $deobfuscatedCode = $this->deobfuscateString($obfuscatedCode);
+            }
+            
+            if ($outputFile === null) {
+                $pathInfo = pathinfo($inputFile);
+                $outputFile = $pathInfo['dirname'] . DIRECTORY_SEPARATOR . $pathInfo['filename'] . '_deobfuscated.' . $pathInfo['extension'];
+            }
+            
+            if (file_put_contents($outputFile, $deobfuscatedCode) === false) {
+                throw new Exception("Failed to write deobfuscated file: {$outputFile}");
+            }
+            
+            return $outputFile;
+        } catch (Exception $e) {
+            echo "Error: " . $e->getMessage() . "\n";
+            return false;
+        }
+    }
+    
+    /**
+     * Analyze obfuscation level of a file
+     */
+    public function analyzeObfuscationLevel($filePath)
+    {
+        try {
+            if (!file_exists($filePath)) {
+                throw new Exception("File not found: {$filePath}");
+            }
+            
+            $content = file_get_contents($filePath);
+            
+            // Check for common obfuscation patterns
+            $patterns = [
+                'base64' => '/base64_decode/',
+                'strrev' => '/strrev/',
+                'eval' => '/eval\s*\(/',
+                'obfuscated' => '/\$obfuscated/',
+                'encoded' => '/[A-Za-z0-9+\/]{20,}={0,2}/' // Base64-like patterns
+            ];
+            
+            $score = 0;
+            $found = [];
+            
+            foreach ($patterns as $type => $pattern) {
+                if (preg_match($pattern, $content)) {
+                    $score += 20;
+                    $found[] = $type;
+                }
+            }
+            
+            $isObfuscated = $score >= 40;
+            $confidence = min(100, $score);
+            
+            return [
+                'is_obfuscated' => $isObfuscated,
+                'confidence' => $confidence,
+                'patterns_found' => $found,
+                'score' => $score
+            ];
+        } catch (Exception $e) {
+            return [
+                'is_obfuscated' => false,
+                'confidence' => 0,
+                'patterns_found' => [],
+                'score' => 0,
+                'error' => $e->getMessage()
+            ];
+        }
+    }
+    
+    /**
      * Obfuscate a PHP file with basic techniques
      */
     public function obfuscateFile($inputFile, $outputFile)
@@ -98,10 +186,51 @@ class SimpleObfuscator
 
 // Example usage
 if (php_sapi_name() === 'cli') {
-    echo "=== PHP Code Obfuscator Demo ===\n";
+    echo "=== PHP Code Obfuscator & Deobfuscator Demo ===\n";
     echo "Note: This standalone obfuscator works without requiring Laravel framework\n";
-    echo "This demo shows basic obfuscation techniques\n\n";
+    echo "This demo shows basic obfuscation and deobfuscation techniques\n\n";
     
+    // Check for command line arguments
+    $args = $argv;
+    if (count($args) > 1) {
+        $command = $args[1];
+        
+        if ($command === 'obfuscate:deobfuscate' && isset($args[2])) {
+            $filePath = $args[2];
+            $outputFile = isset($args[3]) ? $args[3] : null;
+            
+            echo "=== Testing Deobfuscation Command ===\n";
+            echo "Input file: {$filePath}\n";
+            
+            $obfuscator = new SimpleObfuscator();
+            
+            // First analyze the file
+            $analysis = $obfuscator->analyzeObfuscationLevel($filePath);
+            echo "Obfuscation Analysis:\n";
+            echo "  Is Obfuscated: " . ($analysis['is_obfuscated'] ? 'Yes' : 'No') . "\n";
+            echo "  Confidence: {$analysis['confidence']}%\n";
+            echo "  Patterns Found: " . implode(', ', $analysis['patterns_found']) . "\n";
+            
+            // Then deobfuscate
+            $deobfuscatedFile = $obfuscator->deobfuscateFile($filePath, $outputFile);
+            if ($deobfuscatedFile) {
+                echo "✅ Deobfuscated successfully!\n";
+                echo "Output file: {$deobfuscatedFile}\n";
+                
+                // Show content comparison
+                $original = file_get_contents($filePath);
+                $deobfuscated = file_get_contents($deobfuscatedFile);
+                echo "\nContent Comparison:\n";
+                echo "Original size: " . strlen($original) . " bytes\n";
+                echo "Deobfuscated size: " . strlen($deobfuscated) . " bytes\n";
+            } else {
+                echo "❌ Deobfuscation failed!\n";
+            }
+            exit;
+        }
+    }
+    
+    // Default demo mode
     $obfuscator = new SimpleObfuscator();
     
     // Example: Obfuscate a simple PHP code string
@@ -116,13 +245,25 @@ if (php_sapi_name() === 'cli') {
     
     // Example: Obfuscate the example.php file
     if (file_exists('example.php')) {
-        echo "\nObfuscating example.php...\n";
+        echo "\n=== File Obfuscation Test ===\n";
+        echo "Obfuscating example.php...\n";
         if ($obfuscator->obfuscateFile('example.php', 'example_obfuscated.php')) {
-            echo "Successfully created example_obfuscated.php\n";
+            echo "✅ Successfully created example_obfuscated.php\n";
+            
+            // Test deobfuscation
+            echo "\n=== File Deobfuscation Test ===\n";
+            $deobfuscatedFile = $obfuscator->deobfuscateFile('example_obfuscated.php');
+            if ($deobfuscatedFile) {
+                echo "✅ File deobfuscated successfully!\n";
+                echo "Deobfuscated file: {$deobfuscatedFile}\n";
+            }
         }
     }
     
-    echo "\nObfuscation demo completed!\n";
+    echo "\n=== Usage Examples ===\n";
+    echo "Test deobfuscation: php index.php obfuscate:deobfuscate file.php\n";
+    echo "Test with output: php index.php obfuscate:deobfuscate file.php output.php\n";
+    echo "\n=== Demo Complete ===\n";
 } else {
     // Web interface
     echo "<h1>PHP Code Obfuscator Demo</h1>";

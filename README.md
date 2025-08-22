@@ -10,6 +10,7 @@ A comprehensive PHP code obfuscation solution featuring both a **standalone obfu
 
 - PHP 7.4 or higher
 - Composer
+- Valid LaravelObfuscator license key
 
 ## 🚀 Quick Start
 
@@ -26,6 +27,7 @@ Or use our package from this repository:
 1. Copy the `laravel-obfuscator-package/` directory to your Laravel project
 2. Add the service provider to `config/app.php`
 3. Publish configuration: `php artisan vendor:publish --tag=laravel-obfuscator-config`
+4. Set your license key in `.env`: `OBFUSCATOR_LICENSE_KEY=DEMO-1234-5678-9ABC`
 
 ### For Standalone Use
 
@@ -76,6 +78,7 @@ $obfuscator->obfuscateFile('input.php', 'output.php');
 
 ## Features
 
+- **License Protection**: Enterprise-grade license key system with feature restrictions
 - **String Obfuscation**: Obfuscate PHP code strings using base64 encoding and reversal
 - **File Obfuscation**: Obfuscate entire PHP files with automatic wrapper generation
 - **Deobfuscation**: Reverse the obfuscation process to retrieve original code
@@ -96,12 +99,15 @@ We've developed a complete Laravel package (`LaravelObfuscator`) that provides:
 - `php artisan obfuscate:deobfuscate {file}` - Deobfuscate a PHP file
 - `php artisan deobfuscate:all` - Deobfuscate all PHP files
 - `php artisan deobfuscate:directory {directory}` - Deobfuscate specific directory
+- `php artisan obfuscate:license {action}` - Manage license (status, validate, info)
 
 ### **Package Features:**
+- **License Protection**: Enterprise-grade license key system
 - Professional Laravel service provider
 - Configuration system
 - Backup and restore functionality
 - Progress tracking and error reporting
+- Feature restrictions based on license plan
 - Ready for Packagist publication
 
 ## Obfuscation Technique
@@ -114,6 +120,23 @@ The obfuscator uses a simple but effective technique:
 ## Deobfuscation Features
 
 Our package includes advanced deobfuscation capabilities:
+
+### **Command Line Obfuscation**
+```bash
+# Basic obfuscation (creates _obfuscated files)
+php artisan obfuscate:file file.php
+php artisan obfuscate:directory app/Http/Controllers
+php artisan obfuscate:all
+
+# Replace original files (DANGEROUS!)
+php artisan obfuscate:file file.php --replace
+php artisan obfuscate:directory app/Models --replace
+php artisan obfuscate:all --replace
+
+# Custom output paths
+php artisan obfuscate:file file.php --output=custom_name.php
+php artisan obfuscate:directory app/ --output-dir=obfuscated/
+```
 
 ### **Command Line Deobfuscation**
 ```bash
@@ -192,12 +215,39 @@ This will:
 - Compare output with expected results
 - Show file size comparison
 
+## License System
+
+### **Available License Plans:**
+
+- **Demo License** (`DEMO-1234-5678-9ABC`): 30 days, basic features, 10 files max
+- **Trial License** (`TRIAL-ABCD-EFGH-IJKL`): 7 days, full features, 50 files max  
+- **Professional License** (`PRO-1234-5678-9ABC`): 1 year, unlimited features
+
+**Note**: All licenses work offline - no remote server needed!
+
+### **License Commands:**
+```bash
+# Check license status
+php artisan obfuscate:license status
+
+# Validate a license key
+php artisan obfuscate:license validate --key=YOUR_KEY
+
+# Show detailed license info
+php artisan obfuscate:license info
+
+# Generate custom license keys
+php artisan obfuscate:generate-license demo --days=30 --files=10 --size=1
+php artisan obfuscate:generate-license pro --days=365 --files=0 --size=0 --customer="Your Company"
+```
+
 ## Notes
 
 - We've developed our own Laravel obfuscator package with unique features
 - Our package provides the same command structure with enhanced features
 - The standalone obfuscator works without requiring Laravel framework
 - The Laravel package is ready for publication to Packagist
+- **License protection ensures your obfuscation technology is secure**
 
 ## 🤝 Contributing
 

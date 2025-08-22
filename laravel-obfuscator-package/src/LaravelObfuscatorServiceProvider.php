@@ -12,6 +12,8 @@ use LaravelObfuscator\LaravelObfuscator\Console\Commands\DeobfuscateCommand;
 use LaravelObfuscator\LaravelObfuscator\Console\Commands\DeobfuscateAllCommand;
 use LaravelObfuscator\LaravelObfuscator\Console\Commands\DeobfuscateDirectoryCommand;
 use LaravelObfuscator\LaravelObfuscator\Console\Commands\ScheduledObfuscationCommand;
+use LaravelObfuscator\LaravelObfuscator\Console\Commands\LicenseCommand;
+use LaravelObfuscator\LaravelObfuscator\Console\Commands\GenerateLicenseCommand;
 
 class LaravelObfuscatorServiceProvider extends ServiceProvider
 {
@@ -45,14 +47,16 @@ class LaravelObfuscatorServiceProvider extends ServiceProvider
             
             // Register console commands
             $this->commands([
-                            ObfuscateCommand::class,           // obfuscate:file
-            ObfuscateAllCommand::class,        // obfuscate:all
-            ObfuscateDirectoryCommand::class,  // obfuscate:directory
-            RestoreCommand::class,             // obfuscate:restore
-            DeobfuscateCommand::class,         // obfuscate:deobfuscate
-            DeobfuscateAllCommand::class,      // deobfuscate:all
-            DeobfuscateDirectoryCommand::class, // deobfuscate:directory
-            ScheduledObfuscationCommand::class, // obfuscate:scheduled
+                ObfuscateCommand::class,           // obfuscate:file
+                ObfuscateAllCommand::class,        // obfuscate:all
+                ObfuscateDirectoryCommand::class,  // obfuscate:directory
+                RestoreCommand::class,             // obfuscate:restore
+                DeobfuscateCommand::class,         // obfuscate:deobfuscate
+                DeobfuscateAllCommand::class,      // deobfuscate:all
+                DeobfuscateDirectoryCommand::class, // deobfuscate:directory
+                ScheduledObfuscationCommand::class, // obfuscate:scheduled
+                LicenseCommand::class,              // obfuscate:license
+                GenerateLicenseCommand::class,      // obfuscate:generate-license
             ]);
         }
         
