@@ -8,7 +8,7 @@ A comprehensive Laravel package that provides **PHP code obfuscation** with **un
 
 ### 🔧 **Key Features**
 
-- **4 Artisan Commands**: `obfuscate:all`, `obfuscate:directory`, `obfuscate:file`, `obfuscate:restore`
+- **7 Artisan Commands**: `obfuscate:all`, `obfuscate:directory`, `obfuscate:file`, `obfuscate:restore`, `obfuscate:deobfuscate`, `deobfuscate:all`, `deobfuscate:directory`
 - **Backup & Restore System**: Never lose your original code
 - **Professional Configuration**: Customizable settings via config files
 - **Progress Tracking**: Real-time feedback during obfuscation
@@ -31,7 +31,7 @@ composer require rakeshmaity271/obfs:dev-main
 🚀 Just released Laravel Obfuscator v1.0.0! 
 
 A professional PHP code obfuscation package for Laravel with:
-✅ 4 Artisan commands
+✅ 7 Artisan commands (including comprehensive deobfuscator)
 ✅ Backup & restore system  
 ✅ Enhanced features and unique command structure
 ✅ Ready for production use
@@ -47,7 +47,8 @@ A professional PHP code obfuscation package for Laravel with:
 Hi Laravel community! I've just released a comprehensive PHP code obfuscation package with unique features and enhanced functionality.
 
 **What it offers:**
-- 4 Artisan commands for easy integration
+- 7 Artisan commands for easy integration (including comprehensive deobfuscator)
+- Advanced deobfuscation capabilities
 - Backup and restore system
 - Professional configuration management
 - Progress tracking and error handling

@@ -79,6 +79,7 @@ $obfuscator->obfuscateFile('input.php', 'output.php');
 - **String Obfuscation**: Obfuscate PHP code strings using base64 encoding and reversal
 - **File Obfuscation**: Obfuscate entire PHP files with automatic wrapper generation
 - **Deobfuscation**: Reverse the obfuscation process to retrieve original code
+- **Advanced Deobfuscation**: Multiple deobfuscation techniques and analysis tools
 - **Error Handling**: Comprehensive error handling and validation
 - **CLI & Web Support**: Works both from command line and web interface
 - **Standalone Operation**: Works without requiring Laravel framework
@@ -92,6 +93,9 @@ We've developed a complete Laravel package (`LaravelObfuscator`) that provides:
 - `php artisan obfuscate:directory {directory}` - Obfuscate specific directory
 - `php artisan obfuscate:file {file}` - Obfuscate specific file
 - `php artisan obfuscate:restore {backup}` - Restore from backup
+- `php artisan obfuscate:deobfuscate {file}` - Deobfuscate a PHP file
+- `php artisan deobfuscate:all` - Deobfuscate all PHP files
+- `php artisan deobfuscate:directory {directory}` - Deobfuscate specific directory
 
 ### **Package Features:**
 - Professional Laravel service provider
@@ -107,6 +111,45 @@ The obfuscator uses a simple but effective technique:
 2. Reverse the encoded string
 3. Generate a wrapper that deobfuscates and executes the code
 
+## Deobfuscation Features
+
+Our package includes advanced deobfuscation capabilities:
+
+### **Command Line Deobfuscation**
+```bash
+# Basic deobfuscation
+php artisan obfuscate:deobfuscate file.php
+
+# Analyze obfuscation level without deobfuscating
+php artisan obfuscate:deobfuscate file.php --analyze
+
+# Custom output path
+php artisan obfuscate:deobfuscate file.php --output=deobfuscated.php
+
+# Batch process directory
+php artisan obfuscate:deobfuscate directory/ --batch
+
+# Deobfuscate all PHP files in project
+php artisan deobfuscate:all
+
+# Deobfuscate all PHP files in specific directory
+php artisan deobfuscate:directory app/Http/Controllers
+
+# Analyze all files without deobfuscating
+php artisan deobfuscate:all --analyze
+
+# Deobfuscate to custom output directory
+php artisan deobfuscate:directory app/Models --output-dir=deobfuscated_models
+```
+
+### **Deobfuscation Techniques**
+- **Base64 Reverse**: Decode reversed base64 strings
+- **Variable De-randomization**: Restore original variable names
+- **String Decryption**: Decrypt encrypted string literals
+- **Dead Code Removal**: Clean up injected dead code
+- **Anti-Debugging Removal**: Remove anti-debugging measures
+- **Obfuscation Analysis**: Detect obfuscation techniques and levels
+
 ## Project Structure
 
 ```
@@ -121,6 +164,9 @@ obf/
 ├── LICENSE                         # MIT license
 ├── laravel-obfuscator-package/    # Our Laravel package
 │   ├── src/                       # Package source code
+│   │   ├── Console/Commands/      # Artisan commands (obfuscate:*, deobfuscate)
+│   │   ├── Services/              # Obfuscator & Deobfuscator services
+│   │   └── Models/                # User, Project, Audit models
 │   ├── config/                    # Configuration files
 │   ├── composer.json              # Package composer.json
 │   ├── README.md                  # Package documentation
@@ -167,8 +213,9 @@ We welcome contributions! Please feel free to submit a Pull Request.
 
 ### Version 1.0.0 (2024)
 - Initial release
-- Complete Laravel package with 4 Artisan commands
+- Complete Laravel package with 7 Artisan commands
 - Standalone obfuscator functionality
+- Advanced deobfuscation capabilities
 - Backup and restore system
 - Professional configuration system
 - Unique command structure with enhanced features

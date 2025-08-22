@@ -104,6 +104,109 @@ Example:
 php artisan obfuscate:restore backup_1703123456_UserController.php
 ```
 
+**Deobfuscate Examples:**
+```bash
+# Deobfuscate a single file
+php artisan obfuscate:deobfuscate app/Http/Controllers/UserController.php
+
+# Analyze obfuscation level only
+php artisan obfuscate:deobfuscate app/Http/Controllers/UserController.php --analyze
+
+# Deobfuscate with custom output path
+php artisan obfuscate:deobfuscate app/Http/Controllers/UserController.php --output=deobfuscated.php
+
+# Batch deobfuscate all PHP files in a directory
+php artisan obfuscate:deobfuscate app/Http/Controllers --batch
+
+# Deobfuscate all PHP files in project
+php artisan deobfuscate:all
+
+# Deobfuscate all PHP files in specific directory
+php artisan deobfuscate:directory app/Http/Controllers
+
+# Analyze all files without deobfuscating
+php artisan deobfuscate:all --analyze
+
+# Deobfuscate to custom output directory
+php artisan deobfuscate:directory app/Models --output-dir=deobfuscated_models
+```
+
+#### Deobfuscate
+
+To deobfuscate a PHP file or analyze its obfuscation level:
+
+```bash
+php artisan obfuscate:deobfuscate {file}
+```
+
+**Options:**
+- `--output=path` - Specify output file path
+- `--analyze` - Analyze obfuscation level without deobfuscating
+- `--batch` - Process all PHP files in directory
+
+**Examples:**
+```bash
+# Deobfuscate a single file
+php artisan obfuscate:deobfuscate app/Http/Controllers/UserController.php
+
+# Analyze obfuscation level only
+php artisan obfuscate:deobfuscate app/Http/Controllers/UserController.php --analyze
+
+# Deobfuscate with custom output path
+php artisan obfuscate:deobfuscate app/Http/Controllers/UserController.php --output=deobfuscated.php
+
+# Batch deobfuscate all PHP files in a directory
+php artisan obfuscate:deobfuscate app/Http/Controllers --batch
+```
+
+#### Deobfuscate All Files
+
+To deobfuscate all PHP files in your Laravel project:
+
+```bash
+php artisan deobfuscate:all
+```
+
+**Options:**
+- `--output-dir=path` - Specify output directory for all deobfuscated files
+- `--analyze` - Analyze obfuscation level without deobfuscating
+
+**Examples:**
+```bash
+# Deobfuscate all PHP files
+php artisan deobfuscate:all
+
+# Analyze all files without deobfuscating
+php artisan deobfuscate:all --analyze
+
+# Deobfuscate all files to custom directory
+php artisan deobfuscate:all --output-dir=deobfuscated_files
+```
+
+#### Deobfuscate Directory
+
+To deobfuscate all PHP files in a specific directory:
+
+```bash
+php artisan deobfuscate:directory {directory}
+```
+
+**Options:**
+- `--output-dir=path` - Specify output directory for deobfuscated files
+- `--analyze` - Analyze obfuscation level without deobfuscating
+
+**Examples:**
+```bash
+# Deobfuscate all PHP files in a directory
+php artisan deobfuscate:directory app/Http/Controllers
+
+# Analyze all files in directory
+php artisan deobfuscate:directory app/Models --analyze
+
+# Deobfuscate to custom output directory
+php artisan deobfuscate:directory app/Http/Controllers --output-dir=deobfuscated_controllers
+```
+
 ### Programmatic Usage
 
 You can also use the obfuscator service directly in your code:
@@ -174,10 +277,14 @@ src/
 │   │   ├── ObfuscateCommand.php           # obfuscate:file
 │   │   ├── ObfuscateAllCommand.php        # obfuscate:all
 │   │   ├── ObfuscateDirectoryCommand.php  # obfuscate:directory
-│   │   └── RestoreCommand.php             # obfuscate:restore
+│   │   ├── RestoreCommand.php             # obfuscate:restore
+│   │   ├── DeobfuscateCommand.php         # obfuscate:deobfuscate
+│   │   ├── DeobfuscateAllCommand.php      # deobfuscate:all
+│   │   └── DeobfuscateDirectoryCommand.php # deobfuscate:directory
 │   └── ...
 ├── Services/
-│   └── ObfuscatorService.php              # Main service class
+│   ├── ObfuscatorService.php              # Main service class
+│   └── DeobfuscatorService.php            # Deobfuscation service
 ├── LaravelObfuscatorServiceProvider.php   # Service provider
 └── ...
 config/

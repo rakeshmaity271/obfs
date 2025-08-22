@@ -9,6 +9,8 @@ use LaravelObfuscator\LaravelObfuscator\Console\Commands\ObfuscateAllCommand;
 use LaravelObfuscator\LaravelObfuscator\Console\Commands\ObfuscateDirectoryCommand;
 use LaravelObfuscator\LaravelObfuscator\Console\Commands\RestoreCommand;
 use LaravelObfuscator\LaravelObfuscator\Console\Commands\DeobfuscateCommand;
+use LaravelObfuscator\LaravelObfuscator\Console\Commands\DeobfuscateAllCommand;
+use LaravelObfuscator\LaravelObfuscator\Console\Commands\DeobfuscateDirectoryCommand;
 use LaravelObfuscator\LaravelObfuscator\Console\Commands\ScheduledObfuscationCommand;
 
 class LaravelObfuscatorServiceProvider extends ServiceProvider
@@ -48,6 +50,8 @@ class LaravelObfuscatorServiceProvider extends ServiceProvider
             ObfuscateDirectoryCommand::class,  // obfuscate:directory
             RestoreCommand::class,             // obfuscate:restore
             DeobfuscateCommand::class,         // obfuscate:deobfuscate
+            DeobfuscateAllCommand::class,      // deobfuscate:all
+            DeobfuscateDirectoryCommand::class, // deobfuscate:directory
             ScheduledObfuscationCommand::class, // obfuscate:scheduled
             ]);
         }

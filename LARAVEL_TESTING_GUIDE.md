@@ -30,10 +30,22 @@
    echo '<?php echo "Hello World!"; ?>' > test.php
    
    # Test obfuscation
-   php artisan obfuscate:file test.php
-   
-   # Check if obfuscated file was created
-   ls -la test_obfuscated.php
+php artisan obfuscate:file test.php
+
+# Check if obfuscated file was created
+ls -la test_obfuscated.php
+
+# Test deobfuscation
+php artisan obfuscate:deobfuscate test_obfuscated.php
+
+# Test deobfuscation analysis
+php artisan obfuscate:deobfuscate test_obfuscated.php --analyze
+
+# Test deobfuscate all files
+php artisan deobfuscate:all --analyze
+
+# Test deobfuscate directory
+php artisan deobfuscate:directory app/Http/Controllers --analyze
    ```
 
 ### **Option 2: GitHub Integration Testing**
@@ -79,9 +91,10 @@ jobs:
 
 - [ ] Package installs without errors
 - [ ] Configuration publishes correctly
-- [ ] All 4 Artisan commands work
+- [ ] All 7 Artisan commands work (including comprehensive deobfuscator)
 - [ ] Backup system functions properly
 - [ ] Restore system works correctly
+- [ ] Deobfuscation works correctly
 - [ ] Error handling works as expected
 - [ ] Progress tracking displays correctly
 
