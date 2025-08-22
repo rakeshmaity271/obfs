@@ -15,7 +15,7 @@ class ScheduledObfuscationCommand extends Command
     /**
      * The name and signature of the console command.
      */
-    protected $signature = 'mObfuscate:scheduled 
+    protected $signature = 'obfuscate:scheduled 
                             {--project= : Specific project ID to process}
                             {--force : Force obfuscation even if not scheduled}
                             {--dry-run : Show what would be processed without executing}';

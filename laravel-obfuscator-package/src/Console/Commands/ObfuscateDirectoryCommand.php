@@ -10,7 +10,7 @@ class ObfuscateDirectoryCommand extends Command
     /**
      * The name and signature of the console command.
      */
-    protected $signature = 'mObfuscate:directory 
+    protected $signature = 'obfuscate:directory 
                             {directory : Directory path to obfuscate}
                             {--backup : Create backup of original files}';
 

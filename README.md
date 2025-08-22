@@ -4,7 +4,7 @@
 [![PHP Version](https://img.shields.io/badge/PHP-7.4%2B-blue.svg)](https://php.net)
 [![Laravel](https://img.shields.io/badge/Laravel-9%2B-red.svg)](https://laravel.com)
 
-A comprehensive PHP code obfuscation solution featuring both a **standalone obfuscator** and a **professional Laravel package**. Our `LaravelObfuscator` package provides the same functionality as `mmanda/laravel-obfs` but with enhanced features and better integration.
+A comprehensive PHP code obfuscation solution featuring both a **standalone obfuscator** and a **professional Laravel package**. Our `LaravelObfuscator` package provides enhanced features and better integration for Laravel projects.
 
 ## Requirements
 
@@ -88,10 +88,10 @@ $obfuscator->obfuscateFile('input.php', 'output.php');
 We've developed a complete Laravel package (`LaravelObfuscator`) that provides:
 
 ### **Artisan Commands:**
-- `php artisan mObfuscate:all` - Obfuscate all PHP files
-- `php artisan mObfuscate:directory {directory}` - Obfuscate specific directory
-- `php artisan mObfuscate:file {file}` - Obfuscate specific file
-- `php artisan mObfuscate:restore {backup}` - Restore from backup
+- `php artisan obfuscate:all` - Obfuscate all PHP files
+- `php artisan obfuscate:directory {directory}` - Obfuscate specific directory
+- `php artisan obfuscate:file {file}` - Obfuscate specific file
+- `php artisan obfuscate:restore {backup}` - Restore from backup
 
 ### **Package Features:**
 - Professional Laravel service provider
@@ -148,7 +148,7 @@ This will:
 
 ## Notes
 
-- We've developed our own Laravel obfuscator package that replaces `mmanda/laravel-obfs`
+- We've developed our own Laravel obfuscator package with unique features
 - Our package provides the same command structure with enhanced features
 - The standalone obfuscator works without requiring Laravel framework
 - The Laravel package is ready for publication to Packagist
@@ -171,7 +171,7 @@ We welcome contributions! Please feel free to submit a Pull Request.
 - Standalone obfuscator functionality
 - Backup and restore system
 - Professional configuration system
-- Full compatibility with `mmanda/laravel-obfs` commands
+- Unique command structure with enhanced features
 
 ## 🐛 Issue Reporting
 
@@ -187,7 +187,7 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## 🙏 Acknowledgments
 
-- Inspired by `mmanda/laravel-obfs` package
+- Built with ❤️ for the Laravel community
 - Built with ❤️ for the Laravel community
 - Thanks to all contributors
 

@@ -30,7 +30,7 @@
    echo '<?php echo "Hello World!"; ?>' > test.php
    
    # Test obfuscation
-   php artisan mObfuscate:file test.php
+   php artisan obfuscate:file test.php
    
    # Check if obfuscated file was created
    ls -la test_obfuscated.php

@@ -7,7 +7,7 @@ Phase 2 of the Laravel Obfuscator package has been successfully implemented, add
 
 ### 1. **Deobfuscator Service & Command**
 - **Service**: `DeobfuscatorService` with multiple deobfuscation techniques
-- **Command**: `mObfuscate:deobfuscate` for file deobfuscation
+- **Command**: `obfuscate:deobfuscate` for file deobfuscation
 - **Features**:
   - Base64 reverse deobfuscation
   - Advanced deobfuscation techniques
@@ -51,7 +51,7 @@ Phase 2 of the Laravel Obfuscator package has been successfully implemented, add
   - Automated cleanup and maintenance
 
 ### 5. **Scheduled Obfuscation Automation**
-- **Command**: `mObfuscate:scheduled` for automated processing
+- **Command**: `obfuscate:scheduled` for automated processing
 - **Features**:
   - Project-based scheduling
   - Configurable intervals
@@ -191,16 +191,16 @@ Phase 2 of the Laravel Obfuscator package has been successfully implemented, add
 
 ### **Deobfuscate a File**
 ```bash
-php artisan mObfuscate:deobfuscate path/to/file.php
-php artisan mObfuscate:deobfuscate path/to/file.php --analyze
-php artisan mObfuscate:deobfuscate path/to/file.php --batch
+php artisan obfuscate:deobfuscate path/to/file.php
+php artisan obfuscate:deobfuscate path/to/file.php --analyze
+php artisan obfuscate:deobfuscate path/to/file.php --batch
 ```
 
 ### **Scheduled Obfuscation**
 ```bash
-php artisan mObfuscate:scheduled
-php artisan mObfuscate:scheduled --project=1
-php artisan mObfuscate:scheduled --force --dry-run
+php artisan obfuscate:scheduled
+php artisan obfuscate:scheduled --project=1
+php artisan obfuscate:scheduled --force --dry-run
 ```
 
 ### **API Usage**

@@ -4,11 +4,11 @@
 
 ### ✨ **What is Laravel Obfuscator?**
 
-A comprehensive Laravel package that provides **PHP code obfuscation** with the same command structure as `mmanda/laravel-obfs` but with **enhanced features** and **better integration**.
+A comprehensive Laravel package that provides **PHP code obfuscation** with **unique command structure**, **enhanced features**, and **better integration**.
 
 ### 🔧 **Key Features**
 
-- **4 Artisan Commands**: `mObfuscate:all`, `mObfuscate:directory`, `mObfuscate:file`, `mObfuscate:restore`
+- **4 Artisan Commands**: `obfuscate:all`, `obfuscate:directory`, `obfuscate:file`, `obfuscate:restore`
 - **Backup & Restore System**: Never lose your original code
 - **Professional Configuration**: Customizable settings via config files
 - **Progress Tracking**: Real-time feedback during obfuscation
@@ -33,7 +33,7 @@ composer require rakeshmaity271/obfs:dev-main
 A professional PHP code obfuscation package for Laravel with:
 ✅ 4 Artisan commands
 ✅ Backup & restore system  
-✅ Enhanced features over mmanda/laravel-obfs
+✅ Enhanced features and unique command structure
 ✅ Ready for production use
 
 🔗 GitHub: https://github.com/rakeshmaity271/obfs
@@ -44,7 +44,7 @@ A professional PHP code obfuscation package for Laravel with:
 ```
 **Laravel Obfuscator v1.0.0 Released - Professional PHP Code Obfuscation Package**
 
-Hi Laravel community! I've just released a comprehensive PHP code obfuscation package that provides the same functionality as `mmanda/laravel-obfs` but with enhanced features.
+Hi Laravel community! I've just released a comprehensive PHP code obfuscation package with unique features and enhanced functionality.
 
 **What it offers:**
 - 4 Artisan commands for easy integration

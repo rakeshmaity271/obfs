@@ -1,6 +1,6 @@
 {
     "name": "laravel-obfuscator/laravel-obfuscator",
-    "description": "A comprehensive Laravel package for PHP code obfuscation with backup and restore functionality. Provides the same command structure as mmanda/laravel-obfs with enhanced features.",
+    "description": "A comprehensive Laravel package for PHP code obfuscation with backup and restore functionality. Provides unique command structure with enhanced features.",
     "type": "library",
     "license": "MIT",
     "keywords": [

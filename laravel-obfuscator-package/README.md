@@ -1,6 +1,6 @@
 # Laravel Obfuscator Package
 
-A comprehensive Laravel package for PHP code obfuscation with backup and restore functionality. This package provides the same command structure as `mmanda/laravel-obfs` but with enhanced features and better integration.
+A comprehensive Laravel package for PHP code obfuscation with backup and restore functionality. This package provides unique command structure with enhanced features and better integration for Laravel projects.
 
 ## Features
 
@@ -48,7 +48,7 @@ The package provides several Artisan commands to obfuscate PHP files within your
 To obfuscate all PHP files in your Laravel project:
 
 ```bash
-php artisan mObfuscate:all
+php artisan obfuscate:all
 ```
 
 With backup:
@@ -61,7 +61,7 @@ php artisan mObfuscate:all --backup
 To obfuscate PHP files in a specific directory:
 
 ```bash
-php artisan mObfuscate:directory {directory}
+php artisan obfuscate:directory {directory}
 ```
 
 Example:
@@ -75,13 +75,13 @@ php artisan mObfuscate:directory app/Models --backup
 To obfuscate a specific PHP file:
 
 ```bash
-php artisan mObfuscate:file {somefile or dir/file}
+php artisan obfuscate:file {somefile or dir/file}
 ```
 
 Examples:
 ```bash
-php artisan mObfuscate:file app/Http/Controllers/UserController.php
-php artisan mObfuscate:file UserController.php --backup
+php artisan obfuscate:file app/Http/Controllers/UserController.php
+php artisan obfuscate:file UserController.php --backup
 ```
 
 #### Backup and Restore
@@ -89,19 +89,19 @@ php artisan mObfuscate:file UserController.php --backup
 **Backup**: You can create backups of obfuscated files with the `--backup` option:
 
 ```bash
-php artisan mObfuscate:all --backup
-php artisan mObfuscate:file app/Http/Controllers/UserController.php --backup
+php artisan obfuscate:all --backup
+php artisan obfuscate:file app/Http/Controllers/UserController.php --backup
 ```
 
 **Restore**: To restore a backed-up file:
 
 ```bash
-php artisan mObfuscate:restore {backup_file_name}
+php artisan obfuscate:restore {backup_file_name}
 ```
 
 Example:
 ```bash
-php artisan mObfuscate:restore backup_1703123456_UserController.php
+php artisan obfuscate:restore backup_1703123456_UserController.php
 ```
 
 ### Programmatic Usage
@@ -171,10 +171,10 @@ OBFUSCATOR_OUTPUT_SUFFIX=_obfuscated
 src/
 ├── Console/
 │   ├── Commands/
-│   │   ├── ObfuscateCommand.php           # mObfuscate:file
-│   │   ├── ObfuscateAllCommand.php        # mObfuscate:all
-│   │   ├── ObfuscateDirectoryCommand.php  # mObfuscate:directory
-│   │   └── RestoreCommand.php             # mObfuscate:restore
+│   │   ├── ObfuscateCommand.php           # obfuscate:file
+│   │   ├── ObfuscateAllCommand.php        # obfuscate:all
+│   │   ├── ObfuscateDirectoryCommand.php  # obfuscate:directory
+│   │   └── RestoreCommand.php             # obfuscate:restore
 │   └── ...
 ├── Services/
 │   └── ObfuscatorService.php              # Main service class

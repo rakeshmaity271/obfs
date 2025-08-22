@@ -10,7 +10,7 @@ class ObfuscateCommand extends Command
     /**
      * The name and signature of the console command.
      */
-    protected $signature = 'mObfuscate:file 
+    protected $signature = 'obfuscate:file 
                             {input : Input file path to obfuscate}
                             {--output= : Output file path (optional)}
                             {--backup : Create backup of original file}';

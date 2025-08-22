@@ -3,7 +3,7 @@
 /**
  * PHP Code Obfuscator Demo
  * This file demonstrates basic PHP code obfuscation techniques
- * Note: The mmanda/laravel-obfs package requires Laravel framework
+ * Note: This standalone obfuscator works without requiring Laravel framework
  */
 
 class SimpleObfuscator
@@ -99,7 +99,7 @@ class SimpleObfuscator
 // Example usage
 if (php_sapi_name() === 'cli') {
     echo "=== PHP Code Obfuscator Demo ===\n";
-    echo "Note: mmanda/laravel-obfs package requires Laravel framework\n";
+    echo "Note: This standalone obfuscator works without requiring Laravel framework\n";
     echo "This demo shows basic obfuscation techniques\n\n";
     
     $obfuscator = new SimpleObfuscator();
@@ -126,7 +126,7 @@ if (php_sapi_name() === 'cli') {
 } else {
     // Web interface
     echo "<h1>PHP Code Obfuscator Demo</h1>";
-    echo "<p><strong>Note:</strong> The mmanda/laravel-obfs package requires Laravel framework</p>";
+    echo "<p><strong>Note:</strong> This standalone obfuscator works without requiring Laravel framework</p>";
     echo "<p>This demo shows basic obfuscation techniques that work standalone.</p>";
     
     if (isset($_POST['code'])) {

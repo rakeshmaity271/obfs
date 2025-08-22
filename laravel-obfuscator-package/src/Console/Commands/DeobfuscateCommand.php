@@ -11,7 +11,7 @@ class DeobfuscateCommand extends Command
     /**
      * The name and signature of the console command.
      */
-    protected $signature = 'mObfuscate:deobfuscate 
+    protected $signature = 'obfuscate:deobfuscate 
                             {file : The PHP file to deobfuscate}
                             {--output= : Output file path (optional)}
                             {--analyze : Analyze obfuscation level without deobfuscating}

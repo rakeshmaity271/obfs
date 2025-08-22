@@ -43,12 +43,12 @@ class LaravelObfuscatorServiceProvider extends ServiceProvider
             
             // Register console commands
             $this->commands([
-                ObfuscateCommand::class,           // mObfuscate:file
-                ObfuscateAllCommand::class,        // mObfuscate:all
-                ObfuscateDirectoryCommand::class,  // mObfuscate:directory
-                RestoreCommand::class,             // mObfuscate:restore
-                DeobfuscateCommand::class,         // mObfuscate:deobfuscate
-                ScheduledObfuscationCommand::class, // mObfuscate:scheduled
+                            ObfuscateCommand::class,           // obfuscate:file
+            ObfuscateAllCommand::class,        // obfuscate:all
+            ObfuscateDirectoryCommand::class,  // obfuscate:directory
+            RestoreCommand::class,             // obfuscate:restore
+            DeobfuscateCommand::class,         // obfuscate:deobfuscate
+            ScheduledObfuscationCommand::class, // obfuscate:scheduled
             ]);
         }
         

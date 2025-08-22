@@ -10,7 +10,7 @@ class RestoreCommand extends Command
     /**
      * The name and signature of the console command.
      */
-    protected $signature = 'mObfuscate:restore {backup_file_name : Name of the backup file to restore}';
+    protected $signature = 'obfuscate:restore {backup_file_name : Name of the backup file to restore}';
 
     /**
      * The console command description.
