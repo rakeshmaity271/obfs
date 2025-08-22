@@ -92,4 +92,73 @@ return [
         'level' => env('OBFUSCATOR_LOG_LEVEL', 'info'),
         'channel' => env('OBFUSCATOR_LOG_CHANNEL', 'daily'),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Advanced Obfuscation Options
+    |--------------------------------------------------------------------------
+    |
+    | Configure advanced obfuscation techniques for different levels.
+    |
+    */
+    'advanced_obfuscation' => [
+        'randomize_variables' => env('OBFUSCATOR_RANDOMIZE_VARS', true),
+        'encrypt_strings' => env('OBFUSCATOR_ENCRYPT_STRINGS', true),
+        'control_flow_obfuscation' => env('OBFUSCATOR_CONTROL_FLOW', false),
+        'dead_code_injection' => env('OBFUSCATOR_DEAD_CODE', false),
+        'anti_debugging' => env('OBFUSCATOR_ANTI_DEBUG', true),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Web Interface Settings
+    |--------------------------------------------------------------------------
+    |
+    | Configure the web interface behavior and limits.
+    |
+    */
+    'web_interface' => [
+        'max_file_size' => env('OBFUSCATOR_MAX_FILE_SIZE', 10485760), // 10MB
+        'max_batch_files' => env('OBFUSCATOR_MAX_BATCH_FILES', 10),
+        'allowed_file_types' => ['php'],
+        'session_timeout' => env('OBFUSCATOR_SESSION_TIMEOUT', 3600), // 1 hour
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | API Settings
+    |--------------------------------------------------------------------------
+    |
+    | Configure API behavior and rate limiting.
+    |
+    */
+    'api' => [
+        'rate_limit' => [
+            'single_file' => env('OBFUSCATOR_API_RATE_LIMIT', 60), // requests per minute
+            'batch_processing' => env('OBFUSCATOR_API_BATCH_LIMIT', 5), // batches per minute
+        ],
+        'max_file_size' => env('OBFUSCATOR_API_MAX_FILE_SIZE', 10485760), // 10MB
+        'max_batch_size' => env('OBFUSCATOR_API_MAX_BATCH_SIZE', 10),
+        'require_authentication' => env('OBFUSCATOR_API_AUTH', true),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Backup Directory
+    |--------------------------------------------------------------------------
+    |
+    | Configure backup directory for obfuscated files.
+    |
+    */
+    'backup_directory' => env('OBFUSCATOR_BACKUP_DIR', 'storage/app/obfuscator_backups'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Output Directory
+    |--------------------------------------------------------------------------
+    |
+    | Configure output directory for obfuscated files.
+    |
+    */
+    'output_directory' => env('OBFUSCATOR_OUTPUT_DIR', 'storage/app/obfuscated'),
 ];

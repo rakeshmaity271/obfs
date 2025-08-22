@@ -34,6 +34,11 @@ class LaravelObfuscatorServiceProvider extends ServiceProvider
                 __DIR__ . '/../config/laravel-obfuscator.php' => config_path('laravel-obfuscator.php'),
             ], 'laravel-obfuscator-config');
             
+            // Publish views
+            $this->publishes([
+                __DIR__ . '/../resources/views' => resource_path('views/vendor/laravel-obfuscator'),
+            ], 'laravel-obfuscator-views');
+            
             // Register console commands
             $this->commands([
                 ObfuscateCommand::class,           // mObfuscate:file
@@ -43,11 +48,12 @@ class LaravelObfuscatorServiceProvider extends ServiceProvider
             ]);
         }
         
-        // Load views if you want to provide a web interface
+        // Load views for web interface
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'laravel-obfuscator');
         
-        // Load routes if you want to provide web routes
+        // Load web and API routes
         $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+        $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
     }
     
     /**
