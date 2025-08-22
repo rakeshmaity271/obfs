@@ -222,8 +222,24 @@ This will:
 - **Demo License** (`DEMO-1234-5678-9ABC`): 30 days, basic features, 10 files max
 - **Trial License** (`TRIAL-ABCD-EFGH-IJKL`): 7 days, full features, 50 files max  
 - **Professional License** (`PRO-1234-5678-9ABC`): 1 year, unlimited features
+- **Unlimited License** (`--days=0`): Never expires, unlimited features
 
 **Note**: All licenses work offline - no remote server needed!
+
+### **License Protection:**
+
+**🔒 ALL Commands Now Require Valid License:**
+- ✅ **Obfuscation Commands**: `obfuscate:file`, `obfuscate:all`, `obfuscate:directory`
+- ✅ **Deobfuscation Commands**: `deobfuscate:all`, `deobfuscate:directory`, `obfuscate:deobfuscate`
+- ✅ **Utility Commands**: `obfuscate:restore`, `obfuscate:scheduled`
+- ✅ **Web Interface & API**: All obfuscation/deobfuscation features
+- ✅ **Project Management**: File processing and automation
+
+**🔓 License Management Commands (Always Available):**
+- `obfuscate:license status` - Check license status
+- `obfuscate:license validate` - Validate license key
+- `obfuscate:license info` - Show detailed license info
+- `obfuscate:generate-license` - Generate new license keys
 
 ### **License Commands:**
 ```bash

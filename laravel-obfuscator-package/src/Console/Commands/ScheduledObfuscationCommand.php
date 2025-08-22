@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use LaravelObfuscator\LaravelObfuscator\Models\Project;
 use LaravelObfuscator\LaravelObfuscator\Models\AuditLog;
 use LaravelObfuscator\LaravelObfuscator\Services\ObfuscatorService;
+use LaravelObfuscator\LaravelObfuscator\Services\LicenseService;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Carbon\Carbon;
@@ -26,11 +27,13 @@ class ScheduledObfuscationCommand extends Command
     protected $description = 'Run scheduled obfuscation tasks for projects';
 
     protected $obfuscatorService;
+    protected $licenseService;
 
-    public function __construct(ObfuscatorService $obfuscatorService)
+    public function __construct(ObfuscatorService $obfuscatorService, LicenseService $licenseService)
     {
         parent::__construct();
         $this->obfuscatorService = $obfuscatorService;
+        $this->licenseService = $licenseService;
     }
 
     /**
@@ -38,6 +41,13 @@ class ScheduledObfuscationCommand extends Command
      */
     public function handle(): int
     {
+        // Check license before scheduled obfuscation
+        if (!$this->licenseService->isValid()) {
+            $this->error('❌ Invalid or expired license. Please check your LaravelObfuscator license.');
+            $this->info('💡 Use: php artisan obfuscate:license status');
+            return Command::FAILURE;
+        }
+
         $this->info('Starting scheduled obfuscation process...');
 
         $projectId = $this->option('project');

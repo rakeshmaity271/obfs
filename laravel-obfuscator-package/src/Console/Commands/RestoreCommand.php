@@ -4,9 +4,17 @@ namespace LaravelObfuscator\LaravelObfuscator\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
+use LaravelObfuscator\LaravelObfuscator\Services\LicenseService;
 
 class RestoreCommand extends Command
 {
+    protected LicenseService $licenseService;
+
+    public function __construct(LicenseService $licenseService)
+    {
+        parent::__construct();
+        $this->licenseService = $licenseService;
+    }
     /**
      * The name and signature of the console command.
      */
@@ -22,6 +30,13 @@ class RestoreCommand extends Command
      */
     public function handle(): int
     {
+        // Check license before restore
+        if (!$this->licenseService->isValid()) {
+            $this->error('❌ Invalid or expired license. Please check your LaravelObfuscator license.');
+            $this->info('💡 Use: php artisan obfuscate:license status');
+            return Command::FAILURE;
+        }
+
         $backupFileName = $this->argument('backup_file_name');
         
         try {

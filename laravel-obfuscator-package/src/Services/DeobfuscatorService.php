@@ -7,12 +7,30 @@ use Illuminate\Support\Facades\Log;
 
 class DeobfuscatorService
 {
+    private LicenseService $licenseService;
+
+    public function __construct(LicenseService $licenseService)
+    {
+        $this->licenseService = $licenseService;
+    }
+
+    /**
+     * Check license before deobfuscation
+     */
+    private function checkLicense(): void
+    {
+        if (!$this->licenseService->isValid()) {
+            throw new \Exception('Invalid or expired license. Please check your LaravelObfuscator license.');
+        }
+    }
     /**
      * Deobfuscate a PHP file
      */
     public function deobfuscateFile(string $inputFile, string $outputFile = null): string
     {
         try {
+            $this->checkLicense();
+            
             if (!File::exists($inputFile)) {
                 throw new \Exception("Input file not found: {$inputFile}");
             }
@@ -40,6 +58,8 @@ class DeobfuscatorService
      */
     public function deobfuscateString(string $obfuscatedCode): string
     {
+        $this->checkLicense();
+        
         // Try different deobfuscation techniques
         $deobfuscated = $this->tryBase64ReverseDeobfuscation($obfuscatedCode);
         
@@ -194,6 +214,8 @@ class DeobfuscatorService
      */
     public function analyzeObfuscationLevel(string $filePath): array
     {
+        $this->checkLicense();
+        
         if (!File::exists($filePath)) {
             throw new \Exception("File not found: {$filePath}");
         }
@@ -259,6 +281,8 @@ class DeobfuscatorService
      */
     public function deobfuscateDirectory(string $directoryPath): array
     {
+        $this->checkLicense();
+        
         $results = [];
         $files = File::allFiles($directoryPath);
         

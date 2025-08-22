@@ -4,6 +4,8 @@ namespace LaravelObfuscator\LaravelObfuscator;
 
 use Illuminate\Support\ServiceProvider;
 use LaravelObfuscator\LaravelObfuscator\Services\ObfuscatorService;
+use LaravelObfuscator\LaravelObfuscator\Services\DeobfuscatorService;
+use LaravelObfuscator\LaravelObfuscator\Services\LicenseService;
 use LaravelObfuscator\LaravelObfuscator\Console\Commands\ObfuscateCommand;
 use LaravelObfuscator\LaravelObfuscator\Console\Commands\ObfuscateAllCommand;
 use LaravelObfuscator\LaravelObfuscator\Console\Commands\ObfuscateDirectoryCommand;
@@ -23,7 +25,11 @@ class LaravelObfuscatorServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(ObfuscatorService::class, function ($app) {
-            return new ObfuscatorService();
+            return new ObfuscatorService($app->make(LicenseService::class));
+        });
+        
+        $this->app->singleton(DeobfuscatorService::class, function ($app) {
+            return new DeobfuscatorService($app->make(LicenseService::class));
         });
         
         $this->app->alias(ObfuscatorService::class, 'obfuscator');
@@ -73,6 +79,6 @@ class LaravelObfuscatorServiceProvider extends ServiceProvider
      */
     public function provides(): array
     {
-        return [ObfuscatorService::class, 'obfuscator'];
+        return [ObfuscatorService::class, DeobfuscatorService::class, 'obfuscator'];
     }
 }
