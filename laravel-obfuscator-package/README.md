@@ -81,13 +81,9 @@ To obfuscate PHP files in a specific directory:
 # Basic obfuscation (creates _obfuscated versions)
 php artisan obfuscate:directory {directory}
 
-# Secure deployment (replaces originals, moves originals to secure backup)
-php artisan obfuscate:directory {directory} --secure-deploy
-
 # Examples:
 php artisan obfuscate:directory app/Http/Controllers
 php artisan obfuscate:directory app/Models --backup
-php artisan obfuscate:directory app/Http/Controllers --secure-deploy
 ```
 
 #### Obfuscate Specific File
@@ -98,13 +94,9 @@ To obfuscate a specific PHP file:
 # Basic obfuscation (creates _obfuscated version)
 php artisan obfuscate:file {somefile or dir/file}
 
-# Secure deployment (replaces original, moves original to secure backup)
-php artisan obfuscate:file {somefile or dir/file} --secure-deploy
-
 # Examples:
 php artisan obfuscate:file app/Http/Controllers/UserController.php
 php artisan obfuscate:file UserController.php --backup
-php artisan obfuscate:file app/Http/Controllers/UserController.php --secure-deploy
 ```
 
 #### Backup and Restore
@@ -412,48 +404,35 @@ Secure deployment mode provides **true security** by:
 
 ### **Secure Deployment Commands**
 
-#### **Single File Secure Deployment**
+#### **Obfuscation Secure Deployment**
 ```bash
-# Replace original file with obfuscated version
-php artisan obfuscate:file app/Http/Controllers/Controller.php --secure-deploy
-
-# Create deployment package
-php artisan obfuscate:file app/Http/Controllers/Controller.php --secure-deploy --create-package
-```
-
-#### **Directory Secure Deployment**
-```bash
-# Secure deploy entire directory
-php artisan obfuscate:directory app/Http/Controllers --secure-deploy
-
-# Exclude certain files from obfuscation
-php artisan obfuscate:directory app --secure-deploy --exclude=vendor --exclude=storage
-```
-
-#### **Project-Wide Secure Deployment**
-```bash
-# Secure deploy entire project
-php artisan obfuscate:all --secure-deploy
-
-# Create deployment package
-php artisan obfuscate:all --secure-deploy --create-package
-```
-
-#### **Dedicated Secure Deployment Command**
-```bash
-# Create secure deployment package with ZIP
+# Create secure deployment package with obfuscated code
 php artisan obfuscate:secure-deploy app --create-package --output=deployments
 
 # Enterprise-level obfuscation for maximum security
 php artisan obfuscate:secure-deploy app --level=enterprise --create-package
+
+# With exclusions
+php artisan obfuscate:secure-deploy app --exclude=vendor --exclude=storage --create-package
+```
+
+#### **Deobfuscation Secure Deployment**
+```bash
+# Create secure deobfuscation deployment package with readable code
+php artisan deobfuscate:secure-deploy app --create-package --output=deployments
+
+# With exclusions
+php artisan deobfuscate:secure-deploy app --exclude=vendor --create-package
 ```
 
 ### **What Happens in Secure Deployment Mode**
 
-1. **🔒 Original files are backed up** to `storage/app/secure_deployment_backups/`
-2. **🔒 Original files are replaced** with obfuscated versions
+1. **🔒 Original files are backed up** to secure backup locations:
+   - Obfuscation: `storage/app/secure_deployment_backups/`
+   - Deobfuscation: `storage/app/secure_deobfuscation_backups/`
+2. **🔒 Original files are replaced** with processed versions (obfuscated or deobfuscated)
 3. **🔒 Secure backup location** is NOT accessible to clients
-4. **🔒 Only obfuscated code** remains in the project
+4. **🔒 Only processed code** remains in the project
 5. **📦 Optional deployment package** (ZIP) can be created
 
 ### **Security Benefits**
