@@ -57,11 +57,11 @@ class ObfuscatorService
         try {
             $this->checkLicense();
             
-            if (!File::exists($inputFile)) {
+            if (!file_exists($inputFile)) {
                 throw new \Exception("Input file not found: {$inputFile}");
             }
             
-            $sourceCode = File::get($inputFile);
+            $sourceCode = file_get_contents($inputFile);
             $obfuscatedCode = $this->generateAdvancedObfuscatedCode($sourceCode, $level, $options);
             
             if ($outputFile === null) {
@@ -71,13 +71,13 @@ class ObfuscatorService
             // Create wrapper code that deobfuscates and executes
             $wrapperCode = $this->createWrapperCode($obfuscatedCode);
             
-            if (File::put($outputFile, $wrapperCode) === false) {
+            if (file_put_contents($outputFile, $wrapperCode) === false) {
                 throw new \Exception("Failed to write output file: {$outputFile}");
             }
             
             return $outputFile;
         } catch (\Exception $e) {
-            \Log::error('Obfuscation error: ' . $e->getMessage());
+            // Note: Logging not available in standalone mode
             throw $e;
         }
     }

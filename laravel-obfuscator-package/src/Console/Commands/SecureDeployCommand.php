@@ -39,6 +39,15 @@ class SecureDeployCommand extends Command
             return Command::FAILURE;
         }
 
+        // Check for license key in environment
+        $licenseKey = env('OBFUSCATOR_LICENSE_KEY');
+        if (!$licenseKey) {
+            $this->error('❌ No license key found!');
+            $this->info('Generate a key with: php artisan obfuscate:generate-key');
+            $this->info('Then add it to your .env file');
+            return Command::FAILURE;
+        }
+
         $this->warn('🔒  SECURE DEPLOYMENT PACKAGE CREATION');
         $this->warn('🔒  This will create a client-ready package with NO original source code!');
         $this->warn('🔒  Original files will be moved to SECURE backup location.');

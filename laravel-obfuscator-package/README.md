@@ -7,6 +7,8 @@ A comprehensive Laravel package for PHP code obfuscation with backup and restore
 - 🚀 **Multiple Obfuscation Commands**: File, directory, and project-wide obfuscation
 - 💾 **Automatic Backup System**: Create backups before obfuscation
 - 🔄 **Restore Functionality**: Restore files from backups
+- 🔒 **Secure Deployment System**: Client-safe deployment with original code protection
+- 🔑 **Simplified License Management**: Laravel-style key generation (no complex plans)
 - ⚙️ **Configurable**: Customize behavior through config files
 - 📊 **Progress Tracking**: Detailed output with success/error reporting
 - 🛡️ **Safe Operations**: Non-destructive with backup protection
@@ -60,6 +62,27 @@ php artisan deobfuscate:secure-deploy {source} [--output=path] [--exclude=path] 
 - ✅ **Client cannot develop/modify your application**
 - ✅ **Client cannot reverse-engineer your logic**
 - ✅ **Only processed code remains accessible**
+
+#### **🔑 License Management Commands**
+
+Simple, Laravel-style license management:
+
+```bash
+# Generate a new license key (like Laravel's key:generate)
+php artisan obfuscate:generate-key
+
+# Check license status
+php artisan obfuscate:license status
+
+# Validate a license key
+php artisan obfuscate:license validate --key=YOUR_KEY
+```
+
+**Features:**
+- ✅ **Single command key generation** (no complex plans)
+- ✅ **Simple validation** (any 16+ character key is valid)
+- ✅ **Perfect Laravel integration** (works with .env files)
+- ✅ **No demo/trial restrictions** (clean, simple system)
 
 #### **Basic Obfuscation Commands (Development Use)**
 

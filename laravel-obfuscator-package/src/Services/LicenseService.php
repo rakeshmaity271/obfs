@@ -9,14 +9,17 @@ use Illuminate\Support\Str;
 class LicenseService
 {
     private string $licenseKey;
-    private array $licenseData;
     private bool $isValid = false;
     private string $cacheKey = 'laravel_obfuscator_license';
 
-    public function __construct()
+    public function __construct(?string $licenseKey = null)
     {
-        $this->licenseKey = config('laravel-obfuscator.license_key', '');
-        $this->validateLicense();
+        if ($licenseKey === null) {
+            $this->licenseKey = '';
+        } else {
+            $this->licenseKey = $licenseKey;
+        }
+        // Don't validate in constructor - do it lazily when needed
     }
 
     /**
@@ -24,6 +27,16 @@ class LicenseService
      */
     public function isValid(): bool
     {
+        // Load license key if not already loaded
+        if (empty($this->licenseKey)) {
+            $this->loadLicenseKey();
+        }
+        
+        // Validate if not already validated
+        if (!$this->isValid && !empty($this->licenseKey)) {
+            $this->validateLicense();
+        }
+        
         return $this->isValid;
     }
 
@@ -32,12 +45,7 @@ class LicenseService
      */
     public function hasFeature(string $feature): bool
     {
-        if (!$this->isValid) {
-            return false;
-        }
-
-        $features = $this->licenseData['features'] ?? [];
-        return in_array($feature, $features);
+        return $this->isValid;
     }
 
     /**
@@ -48,23 +56,19 @@ class LicenseService
         if (!$this->isValid) {
             return [
                 'valid' => false,
-                'message' => 'Invalid or expired license'
+                'message' => 'No valid license key found. Run: php artisan obfuscate:generate-key'
             ];
         }
 
         return [
             'valid' => true,
-            'customer' => $this->licenseData['customer'] ?? 'Unknown',
-            'plan' => $this->licenseData['plan'] ?? 'Unknown',
-            'expires_at' => $this->licenseData['expires_at'] ?? null,
-            'features' => $this->licenseData['features'] ?? [],
-            'max_files' => $this->licenseData['max_files'] ?? 0,
-            'max_file_size' => $this->licenseData['max_file_size'] ?? 0,
+            'message' => 'License key is valid',
+            'key' => $this->licenseKey
         ];
     }
 
     /**
-     * Check usage limits
+     * Check usage limits (always allowed with valid key)
      */
     public function checkUsageLimits(int $fileCount = 0, int $fileSize = 0): array
     {
@@ -72,24 +76,21 @@ class LicenseService
             return ['allowed' => false, 'message' => 'Invalid license'];
         }
 
-        $maxFiles = $this->licenseData['max_files'] ?? 0;
-        $maxFileSize = $this->licenseData['max_file_size'] ?? 0;
+        return ['allowed' => true, 'message' => 'Usage allowed'];
+    }
 
-        if ($maxFiles > 0 && $fileCount > $maxFiles) {
-            return [
-                'allowed' => false,
-                'message' => "File count limit exceeded. Max: {$maxFiles}, Current: {$fileCount}"
-            ];
+    /**
+     * Load license key from config
+     */
+    private function loadLicenseKey(): void
+    {
+        try {
+            if (function_exists('config')) {
+                $this->licenseKey = config('laravel-obfuscator.license.license_key', '');
+            }
+        } catch (\Exception $e) {
+            // Config not available, keep empty key
         }
-
-        if ($maxFileSize > 0 && $fileSize > $maxFileSize) {
-            return [
-                'allowed' => false,
-                'message' => "File size limit exceeded. Max: " . $this->formatBytes($maxFileSize) . ", Current: " . $this->formatBytes($fileSize)
-            ];
-        }
-
-        return ['allowed' => true, 'message' => 'Usage within limits'];
     }
 
     /**
@@ -102,191 +103,66 @@ class LicenseService
             return;
         }
 
-        // Check cache first
-        $cached = Cache::get($this->cacheKey);
-        if ($cached && $cached['expires_at'] > time()) {
-            $this->licenseData = $cached;
+        // Check cache first (if available)
+        try {
+            if (class_exists('Illuminate\Support\Facades\Cache')) {
+                $cached = Cache::get($this->cacheKey);
+                if ($cached && $cached['key'] === $this->licenseKey) {
+                    $this->isValid = true;
+                    return;
+                }
+            }
+        } catch (\Exception $e) {
+            // Cache not available, continue with validation
+        }
+
+        // Simple validation: any non-empty key is valid
+        if (strlen($this->licenseKey) >= 16) {
             $this->isValid = true;
+            
+            // Cache for 24 hours (if available)
+            try {
+                if (class_exists('Illuminate\Support\Facades\Cache')) {
+                    Cache::put($this->cacheKey, [
+                        'key' => $this->licenseKey,
+                        'validated_at' => time()
+                    ], 86400);
+                }
+            } catch (\Exception $e) {
+                // Cache not available, continue without caching
+            }
+            
             return;
         }
 
-        // Validate with license server (or local validation for demo)
-        $this->licenseData = $this->validateWithServer();
-        
-        if ($this->isValid) {
-            // Cache for 1 hour
-            Cache::put($this->cacheKey, $this->licenseData, 3600);
-        }
-    }
-
-    /**
-     * Validate license locally
-     */
-    private function validateWithServer(): array
-    {
-        // Only use local validation - no remote server needed
-        $licenseData = $this->validateLicenseLocally($this->licenseKey);
-        
-        if ($licenseData) {
-            $this->isValid = true;
-            return $licenseData;
-        }
-
         $this->isValid = false;
-        return [];
     }
 
     /**
-     * Local license validation (for demo/testing)
+     * Generate a new license key
      */
-    private function validateLicenseLocally(string $key): ?array
+    public function generateKey(): string
     {
-        // Demo license keys for testing
-        $demoLicenses = [
-            'DEMO-1234-5678-9ABC' => [
-                'customer' => 'Demo User',
-                'plan' => 'Demo',
-                'expires_at' => time() + (30 * 24 * 60 * 60), // 30 days
-                'features' => ['basic_obfuscation', 'deobfuscation'],
-                'max_files' => 10,
-                'max_file_size' => 1024 * 1024, // 1MB
-            ],
-            'TRIAL-ABCD-EFGH-IJKL' => [
-                'customer' => 'Trial User',
-                'plan' => 'Trial',
-                'expires_at' => time() + (7 * 24 * 60 * 60), // 7 days
-                'features' => ['basic_obfuscation', 'deobfuscation', 'advanced_obfuscation'],
-                'max_files' => 50,
-                'max_file_size' => 5 * 1024 * 1024, // 5MB
-            ],
-            'PRO-1234-5678-9ABC' => [
-                'customer' => 'Pro User',
-                'plan' => 'Professional',
-                'expires_at' => time() + (365 * 24 * 60 * 60), // 1 year
-                'features' => ['basic_obfuscation', 'deobfuscation', 'advanced_obfuscation', 'enterprise_features'],
-                'max_files' => -1, // Unlimited
-                'max_file_size' => -1, // Unlimited
-            ]
-        ];
-
-        // Check if it's a generated key (format: PLAN-TIMESTAMP-RANDOM)
-        if (preg_match('/^([A-Z]+)-\d{10}-[A-Za-z0-9]{8}$/', $key, $matches)) {
-            $plan = strtolower($matches[1]);
-            return $this->validateGeneratedKey($key, $plan);
+        $key = 'OBF-' . strtoupper(Str::random(4)) . '-' . strtoupper(Str::random(4)) . '-' . strtoupper(Str::random(4));
+        
+        // Clear cache (if available)
+        try {
+            if (class_exists('Illuminate\Support\Facades\Cache')) {
+                Cache::forget($this->cacheKey);
+            }
+        } catch (\Exception $e) {
+            // Cache not available, continue without clearing
         }
-
-        return $demoLicenses[$key] ?? null;
+        
+        return $key;
     }
 
     /**
-     * Validate generated license keys
+     * Set license key (for testing)
      */
-    private function validateGeneratedKey(string $key, string $plan): ?array
+    public function setKey(string $key): void
     {
-        // Extract timestamp from key (format: PLAN-TIMESTAMP-RANDOM)
-        $parts = explode('-', $key);
-        $timestamp = (int) $parts[1];
-        $currentTime = time();
-        
-        // Check if key is expired (0 means unlimited/never expires)
-        if ($timestamp > 0 && $timestamp < $currentTime) {
-            return null; // Expired
-        }
-
-        // Calculate days left (0 means unlimited)
-        if ($timestamp > 0) {
-            $daysLeft = ceil(($timestamp - $currentTime) / (24 * 60 * 60));
-        } else {
-            $daysLeft = -1; // Unlimited
-        }
-        
-        // Generate license data based on plan
-        switch ($plan) {
-            case 'demo':
-                return [
-                    'customer' => 'Generated Demo User',
-                    'plan' => 'Demo',
-                    'expires_at' => $timestamp > 0 ? $timestamp : null,
-                    'features' => ['basic_obfuscation', 'deobfuscation'],
-                    'max_files' => 10,
-                    'max_file_size' => 1024 * 1024, // 1MB
-                ];
-                
-            case 'trial':
-                return [
-                    'customer' => 'Generated Trial User',
-                    'plan' => 'Trial',
-                    'expires_at' => $timestamp > 0 ? $timestamp : null,
-                    'features' => ['basic_obfuscation', 'deobfuscation', 'advanced_obfuscation'],
-                    'max_files' => 50,
-                    'max_file_size' => 5 * 1024 * 1024, // 5MB
-                ];
-                
-            case 'pro':
-                return [
-                    'customer' => 'Generated Pro User',
-                    'plan' => 'Professional',
-                    'expires_at' => $timestamp > 0 ? $timestamp : null,
-                    'features' => ['basic_obfuscation', 'deobfuscation', 'advanced_obfuscation', 'enterprise_features'],
-                    'max_files' => -1, // Unlimited
-                    'max_file_size' => -1, // Unlimited
-                ];
-                
-            case 'custom':
-                return [
-                    'customer' => 'Generated Custom User',
-                    'plan' => 'Custom',
-                    'expires_at' => $timestamp > 0 ? $timestamp : null,
-                    'features' => ['basic_obfuscation', 'deobfuscation'],
-                    'max_files' => 100,
-                    'max_file_size' => 10 * 1024 * 1024, // 10MB
-                ];
-                
-            default:
-                return null;
-        }
-    }
-
-
-
-    /**
-     * Format bytes to human readable
-     */
-    private function formatBytes(int $bytes): string
-    {
-        $units = ['B', 'KB', 'MB', 'GB'];
-        $bytes = max($bytes, 0);
-        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
-        $pow = min($pow, count($units) - 1);
-
-        $bytes /= pow(1024, $pow);
-
-        return round($bytes, 2) . ' ' . $units[$pow];
-    }
-
-    /**
-     * Get license status for display
-     */
-    public function getStatus(): string
-    {
-        if (!$this->isValid) {
-            return '❌ Invalid License';
-        }
-
-        $expiresAt = $this->licenseData['expires_at'] ?? 0;
-        
-        if ($expiresAt === null) {
-            return "✅ Valid (Unlimited - Never Expires)";
-        }
-        
-        $daysLeft = ceil(($expiresAt - time()) / (24 * 60 * 60));
-
-        if ($daysLeft <= 0) {
-            return '❌ License Expired';
-        } elseif ($daysLeft <= 7) {
-            return "⚠️  Expires in {$daysLeft} days";
-        } else {
-            return "✅ Valid ({$daysLeft} days left)";
-        }
+        $this->licenseKey = $key;
+        $this->validateLicense();
     }
 }

@@ -49,36 +49,15 @@ class LicenseCommand extends Command
         $this->info('🔐 LaravelObfuscator License Status');
         $this->info('=====================================');
 
-        $status = $licenseService->getStatus();
-        $this->info("Status: {$status}");
-
         if ($licenseService->isValid()) {
             $info = $licenseService->getLicenseInfo();
-            $this->info("Customer: {$info['customer']}");
-            $this->info("Plan: {$info['plan']}");
-            
-            if ($info['expires_at']) {
-                $expiresAt = date('Y-m-d H:i:s', $info['expires_at']);
-                $this->info("Expires: {$expiresAt}");
-            }
-
-            $this->info("Features: " . implode(', ', $info['features']));
-            
-            if ($info['max_files'] > 0) {
-                $this->info("File Limit: {$info['max_files']} files");
-            } else {
-                $this->info("File Limit: Unlimited");
-            }
-
-            if ($info['max_file_size'] > 0) {
-                $this->info("Size Limit: " . $this->formatBytes($info['max_file_size']));
-            } else {
-                $this->info("Size Limit: Unlimited");
-            }
+            $this->info("Status: ✅ Valid License");
+            $this->info("Key: {$info['key']}");
+            $this->info("Message: {$info['message']}");
         } else {
             $this->warn('⚠️  No valid license found!');
-            $this->info('To activate, set OBFUSCATOR_LICENSE_KEY in your .env file');
-            $this->info('Demo keys available: DEMO-1234-5678-9ABC, TRIAL-ABCD-EFGH-IJKL, PRO-1234-5678-9ABC');
+            $this->info('To activate, run: php artisan obfuscate:generate-key');
+            $this->info('Then add the key to your .env file');
         }
 
         return Command::SUCCESS;
@@ -97,25 +76,18 @@ class LicenseCommand extends Command
         $this->info('🔍 Validating License Key...');
         $this->info("Key: {$licenseKey}");
 
-        // Validate the license key locally
-        $demoLicenses = [
-            'DEMO-1234-5678-9ABC' => 'Demo License (30 days, limited features)',
-            'TRIAL-ABCD-EFGH-IJKL' => 'Trial License (7 days, full features)',
-            'PRO-1234-5678-9ABC' => 'Professional License (1 year, unlimited)',
-        ];
-
-        if (isset($demoLicenses[$licenseKey])) {
+        // Set the key temporarily and validate
+        $licenseService->setKey($licenseKey);
+        
+        if ($licenseService->isValid()) {
             $this->info('✅ License Key Valid!');
-            $this->info("Type: {$demoLicenses[$licenseKey]}");
+            $this->info('Type: Generated License');
             $this->info('');
             $this->info('To activate this license, add to your .env file:');
             $this->info("OBFUSCATOR_LICENSE_KEY={$licenseKey}");
         } else {
             $this->error('❌ Invalid License Key!');
-            $this->info('Available demo keys:');
-            foreach ($demoLicenses as $key => $description) {
-                $this->info("  {$key} - {$description}");
-            }
+            $this->info('Generate a new key with: php artisan obfuscate:generate-key');
             return Command::FAILURE;
         }
 

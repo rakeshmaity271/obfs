@@ -21,7 +21,6 @@ return [
     */
     'license' => [
         'license_key' => env('OBFUSCATOR_LICENSE_KEY', ''),
-        'demo_mode' => env('OBFUSCATOR_DEMO_MODE', true),
     ],
 
     /*
