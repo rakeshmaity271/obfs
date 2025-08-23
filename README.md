@@ -104,6 +104,14 @@ A comprehensive PHP code obfuscation package for Laravel with **true client secu
 - ✅ **Creates deployment packages** (ZIP files with only obfuscated code)
 - ✅ **Ensures clients cannot reverse-engineer** your application
 
+### 🔑 **Simplified License System**
+
+**Laravel-Style Key Generation:**
+- ✅ **Single Command**: `php artisan obfuscate:generate-key` (like Laravel's `key:generate`)
+- ✅ **Simple Validation**: Any 16+ character key is valid
+- ✅ **No Complex Plans**: Removed demo/trial/pro restrictions
+- ✅ **Perfect Integration**: Works seamlessly with Laravel's config system
+
 ### 🛠️ **Artisan Commands**
 
 #### **🔒 Secure Deployment Commands (RECOMMENDED)**
@@ -113,6 +121,18 @@ php artisan obfuscate:secure-deploy {source} [--output=path] [--exclude=path] [-
 
 # Create secure deobfuscation deployment package with readable code (replaces obfuscated, moves obfuscated to secure backup)
 php artisan deobfuscate:secure-deploy {source} [--output=path] [--exclude=path] [--create-package]
+```
+
+#### **🔑 License Management Commands**
+```bash
+# Generate a new license key (like Laravel's key:generate)
+php artisan obfuscate:generate-key
+
+# Check license status
+php artisan obfuscate:license status
+
+# Validate a license key
+php artisan obfuscate:license validate --key=YOUR_KEY
 ```
 
 #### **Basic Obfuscation Commands (Development Use)**
@@ -144,11 +164,14 @@ php artisan deobfuscate:directory {directory} [--output-dir=path] [--analyze]
 
 #### **License Management Commands**
 ```bash
+# Generate a new license key (like Laravel's key:generate)
+php artisan obfuscate:generate-key
+
 # Check license status
 php artisan obfuscate:license status
 
-# Generate custom license key
-php artisan obfuscate:generate-license [--plan=demo] [--days=30] [--file-limit=100] [--size-limit=10MB]
+# Validate a license key
+php artisan obfuscate:license validate --key=YOUR_KEY
 ```
 
 ### 🔐 **Security Benefits**
@@ -162,6 +185,9 @@ php artisan obfuscate:generate-license [--plan=demo] [--days=30] [--file-limit=1
 ### 📦 **Package Features**
 
 - **Complete Laravel package** with streamlined Artisan commands
+- **🔒 Secure deployment system** with client-safe code protection
+- **🔑 Simplified license management** with Laravel-style key generation
+- **📦 ZIP package creation** for professional client deliverables
 - **License key protection** for all obfuscation operations
 - **Multiple obfuscation levels** (basic, advanced, enterprise)
 - **Web interface** and RESTful API endpoints
@@ -279,14 +305,15 @@ This will:
 
 ## License System
 
-### **Available License Plans:**
+### **Simplified License Management:**
 
-- **Demo License** (`DEMO-1234-5678-9ABC`): 30 days, basic features, 10 files max
-- **Trial License** (`TRIAL-ABCD-EFGH-IJKL`): 7 days, full features, 50 files max  
-- **Professional License** (`PRO-1234-5678-9ABC`): 1 year, unlimited features
-- **Unlimited License** (`--days=0`): Never expires, unlimited features
+- **Single Command Generation**: `php artisan obfuscate:generate-key` (like Laravel's `key:generate`)
+- **Simple Validation**: Any 16+ character key is valid
+- **No Complex Plans**: Removed demo/trial/pro restrictions
+- **Perfect Integration**: Works seamlessly with Laravel's config system
+- **Offline Operation**: All licenses work offline - no remote server needed!
 
-**Note**: All licenses work offline - no remote server needed!
+**Example Generated Key**: `OBF-YJAX-F4MS-4WRO`
 
 ### **License Protection:**
 
@@ -296,38 +323,35 @@ This will:
 - ✅ **Utility Commands**: `obfuscate:restore`, `obfuscate:scheduled`
 - ✅ **Web Interface & API**: All obfuscation/deobfuscation features
 - ✅ **Project Management**: File processing and automation
+- ✅ **Secure Deployment**: `obfuscate:secure-deploy`, `deobfuscate:secure-deploy`
 
 **🔓 License Management Commands (Always Available):**
+- `obfuscate:generate-key` - Generate new license key
 - `obfuscate:license status` - Check license status
 - `obfuscate:license validate` - Validate license key
-- `obfuscate:license info` - Show detailed license info
-- `obfuscate:generate-license` - Generate new license keys
 
 ### **License Commands:**
 ```bash
+# Generate a new license key (like Laravel's key:generate)
+php artisan obfuscate:generate-key
+
 # Check license status
 php artisan obfuscate:license status
 
 # Validate a license key
 php artisan obfuscate:license validate --key=YOUR_KEY
-
-# Show detailed license info
-php artisan obfuscate:license info
-
-# Generate custom license keys
-php artisan obfuscate:generate-license demo --days=30 --files=10 --size=1
-php artisan obfuscate:generate-license pro --days=365 --files=0 --size=0 --customer="Your Company"
-php artisan obfuscate:generate-license pro --days=0 --files=0 --size=0 --customer="Unlimited License"
 ```
 
 ## Notes
 
 - We've developed our own Laravel obfuscator package with unique features
 - Our package provides streamlined command structure with enhanced features
-- **Secure deployment commands** provide true client security (no `--secure-deploy` flags on basic commands)
+- **🔒 Secure deployment commands** provide true client security with ZIP package creation
+- **🔑 Simplified license system** with Laravel-style key generation (no complex plans)
 - The standalone obfuscator works without requiring Laravel framework
-- The Laravel package is ready for publication to Packagist
+- The Laravel package is **production ready** and can be published to Packagist
 - **License protection ensures your obfuscation technology is secure**
+- **All commands tested and working** in production environment
 
 ## 🤝 Contributing
 
@@ -350,6 +374,13 @@ We welcome contributions! Please feel free to submit a Pull Request.
 - Professional configuration system
 - Secure deployment commands for client deliverables
 - Unique command structure with enhanced features
+
+### Version 1.1.0 (2025) - Secure Deployment & Simplified License
+- 🔒 **Complete Secure Deployment System** - Client-safe deployment with original code protection
+- 🔑 **Simplified License Management** - Laravel-style key generation (no complex plans)
+- 📦 **ZIP Package Creation** - Client-ready deployment packages
+- 🛡️ **Enhanced Security** - Original source code completely hidden from clients
+- ✅ **Production Ready** - All commands tested and working in production environment
 
 ## 🐛 Issue Reporting
 
