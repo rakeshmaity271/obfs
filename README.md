@@ -87,28 +87,95 @@ $obfuscator->obfuscateFile('input.php', 'output.php');
 - **CLI & Web Support**: Works both from command line and web interface
 - **Standalone Operation**: Works without requiring Laravel framework
 
-## Our Laravel Package
+## 🚀 **LaravelObfuscator Package**
 
-We've developed a complete Laravel package (`LaravelObfuscator`) that provides:
+A comprehensive PHP code obfuscation package for Laravel with **true client security** through secure deployment mode.
 
-### **Artisan Commands:**
-- `php artisan obfuscate:all` - Obfuscate all PHP files
-- `php artisan obfuscate:directory {directory}` - Obfuscate specific directory
-- `php artisan obfuscate:file {file}` - Obfuscate specific file
-- `php artisan obfuscate:restore {backup}` - Restore from backup
-- `php artisan obfuscate:deobfuscate {file}` - Deobfuscate a PHP file
-- `php artisan deobfuscate:all` - Deobfuscate all PHP files
-- `php artisan deobfuscate:directory {directory}` - Deobfuscate specific directory
-- `php artisan obfuscate:license {action}` - Manage license (status, validate, info)
+### 🔒 **Key Security Feature: Secure Deployment Mode**
 
-### **Package Features:**
-- **License Protection**: Enterprise-grade license key system
-- Professional Laravel service provider
-- Configuration system
-- Backup and restore functionality
-- Progress tracking and error reporting
-- Feature restrictions based on license plan
-- Ready for Packagist publication
+**The Problem with Basic Obfuscation:**
+- ❌ Creates `_obfuscated` files alongside originals
+- ❌ Client can still access original source code
+- ❌ Client can still develop/modify your application
+
+**The Solution: Secure Deployment Mode**
+- ✅ **Replaces original files** with obfuscated versions
+- ✅ **Moves originals to secure backup** (client cannot access)
+- ✅ **Creates deployment packages** (ZIP files with only obfuscated code)
+- ✅ **Ensures clients cannot reverse-engineer** your application
+
+### 🛠️ **Artisan Commands**
+
+#### **🔒 Secure Deployment Commands (RECOMMENDED)**
+```bash
+# Secure deploy specific file (replaces original, moves original to secure backup)
+php artisan obfuscate:file {file} --secure-deploy
+
+# Secure deploy entire project (replaces all originals, moves originals to secure backup)
+php artisan obfuscate:all --secure-deploy
+
+# Secure deploy directory (replaces originals, moves originals to secure backup)
+php artisan obfuscate:directory {directory} --secure-deploy
+
+# Create secure deployment package with ZIP file
+php artisan obfuscate:secure-deploy {source} [--output=path] [--exclude=path] [--level=enterprise] [--create-package]
+```
+
+#### **Basic Obfuscation Commands (Development Use)**
+```bash
+# Obfuscate specific file (creates _obfuscated version)
+php artisan obfuscate:file {file} [--output=path] [--backup]
+
+# Obfuscate all PHP files in project (creates _obfuscated versions)
+php artisan obfuscate:all [--backup]
+
+# Obfuscate specific directory (creates _obfuscated versions)
+php artisan obfuscate:directory {directory} [--backup]
+
+# Restore from backup
+php artisan obfuscate:restore {backup}
+```
+
+#### **Deobfuscation Commands**
+```bash
+# Deobfuscate specific file
+php artisan obfuscate:deobfuscate {file}
+
+# Deobfuscate all files in project
+php artisan obfuscate:deobfuscate:all
+
+# Deobfuscate directory
+php artisan obfuscate:deobfuscate:directory {directory}
+```
+
+#### **License Management Commands**
+```bash
+# Check license status
+php artisan obfuscate:license status
+
+# Generate custom license key
+php artisan obfuscate:generate-license [--plan=demo] [--days=30] [--file-limit=100] [--size-limit=10MB]
+```
+
+### 🔐 **Security Benefits**
+
+- **🚫 No Source Code Access**: Clients cannot read your original code
+- **🚫 No Development Capability**: Clients cannot modify your logic
+- **🚫 No Reverse Engineering**: Obfuscated code is extremely difficult to understand
+- **✅ Full Functionality**: Application works exactly the same
+- **✅ Professional Delivery**: Clean, production-ready codebase
+
+### 📦 **Package Features**
+
+- **Complete Laravel package** with 9 Artisan commands
+- **License key protection** for all obfuscation operations
+- **Multiple obfuscation levels** (basic, advanced, enterprise)
+- **Web interface** and RESTful API endpoints
+- **User management system** with role-based access control
+- **Project management** for organizing files and tasks
+- **Audit logging** for compliance and activity tracking
+- **Scheduled obfuscation** automation
+- **Comprehensive deobfuscator** for analysis and restoration
 
 ## Obfuscation Technique
 
