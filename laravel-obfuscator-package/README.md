@@ -45,9 +45,28 @@ php artisan vendor:publish --tag=laravel-obfuscator-config
 
 The package provides several Artisan commands to obfuscate PHP files within your Laravel project.
 
-#### 🔒 **Secure Deployment Commands (RECOMMENDED)**
+#### 🚀 **Simple Application Deployment Commands (RECOMMENDED)**
 
-For **true security** when delivering to clients, use these commands:
+For **complete Laravel application deployment** with just one command:
+
+```bash
+# Deploy entire Laravel application securely (excludes vendor, node_modules, etc.)
+php artisan obfuscate:app-deploy [--output=path] [--level=enterprise] [--create-package] [--force]
+
+# Deobfuscate entire Laravel application securely (excludes vendor, node_modules, etc.)
+php artisan deobfuscate:app-deploy [--output=path] [--create-package] [--force]
+```
+
+**What These Commands Do:**
+- ✅ **Automatically detect** current Laravel application
+- ✅ **Exclude vendor, node_modules, storage, .git, .env** automatically
+- ✅ **Process all PHP files** in your application
+- ✅ **Create secure backups** of original code
+- ✅ **Optionally create ZIP packages** for deployment
+
+#### 🔒 **Advanced Secure Deployment Commands**
+
+For **custom deployment scenarios** (requires specifying source and exclusions):
 
 ```bash
 # Create secure deployment package with obfuscated code (replaces originals, moves originals to secure backup)

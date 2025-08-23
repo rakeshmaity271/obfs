@@ -12,10 +12,11 @@ class DeobfuscateSecureDeployCommand extends Command
      * The name and signature of the console command.
      */
     protected $signature = 'deobfuscate:secure-deploy 
-                            {source : Source directory or file to deploy}
+                            {source? : Source directory or file to deploy (defaults to current directory)}
                             {--output= : Output directory for deployment package}
                             {--exclude=* : Files/directories to exclude from deobfuscation}
-                            {--create-package : Create a deployment package (ZIP file)}';
+                            {--create-package : Create a deployment package (ZIP file)}
+                            {--app-only : Deploy only the application (exclude vendor, node_modules, etc.)}';
 
     /**
      * The console command description.
@@ -41,19 +42,43 @@ class DeobfuscateSecureDeployCommand extends Command
      */
     public function handle(): int
     {
-        $source = $this->argument('source');
+        $source = $this->argument('source') ?: getcwd();
         $output = $this->option('output');
         $exclude = $this->option('exclude');
         $createPackage = $this->option('create-package');
+        $appOnly = $this->option('app-only');
 
         if (!file_exists($source)) {
             $this->error("Source not found: {$source}");
             return Command::FAILURE;
         }
 
+        // Set default exclusions for Laravel applications
+        if ($appOnly || empty($exclude)) {
+            $defaultExclusions = [
+                'vendor',
+                'node_modules',
+                'storage/logs',
+                'storage/framework/cache',
+                'storage/framework/sessions',
+                'storage/framework/views',
+                '.git',
+                '.env',
+                'composer.lock',
+                'package-lock.json',
+                'yarn.lock',
+                'npm-debug.log',
+                '.DS_Store',
+                'Thumbs.db'
+            ];
+            $exclude = array_merge($exclude, $defaultExclusions);
+        }
+
         $this->warn('🔓  SECURE DEOBFUSCATION DEPLOYMENT PACKAGE CREATION');
         $this->warn('🔓  This will create a client-ready package with readable, maintainable code!');
         $this->warn('🔓  Original obfuscated files will be moved to SECURE backup location.');
+        $this->info("🔓  Source: {$source}");
+        $this->info("🔓  Excluding: " . implode(', ', $exclude));
         
         if (!$this->confirm('Are you ready to create a deobfuscation deployment package?')) {
             $this->info('Secure deobfuscation deployment cancelled.');
@@ -127,42 +152,40 @@ class DeobfuscateSecureDeployCommand extends Command
         $phpFiles = $this->getPhpFiles($source, $exclude);
         $this->info("🔓  Found " . count($phpFiles) . " PHP files to deobfuscate");
         
+        if (empty($phpFiles)) {
+            $this->warn("⚠️  No PHP files found to deobfuscate!");
+            return Command::SUCCESS;
+        }
+
         $successCount = 0;
-        $totalCount = count($phpFiles);
+        $failedCount = 0;
         
-        $progressBar = $this->output->createProgressBar($totalCount);
+        $progressBar = $this->output->createProgressBar(count($phpFiles));
         $progressBar->start();
         
         foreach ($phpFiles as $file) {
             try {
-                $progressBar->advance();
-                
-                // Deobfuscate to temporary file first
-                $tempOutput = $this->generateTempOutputPath($file);
-                $deobfuscatedPath = $this->deobfuscatorService->deobfuscateFile($file, $tempOutput);
+                $deobfuscatedPath = $this->deobfuscatorService->deobfuscateFile($file, null);
                 
                 // Replace original with deobfuscated
-                if (rename($tempOutput, $file)) {
+                if (rename($deobfuscatedPath, $file)) {
                     $successCount++;
                 } else {
-                    $this->warn("⚠️  Failed to replace: {$file}");
+                    $failedCount++;
                 }
             } catch (\Exception $e) {
-                $this->warn("⚠️  Failed to deobfuscate: {$file} - {$e->getMessage()}");
+                $failedCount++;
             }
+            $progressBar->advance();
         }
         
         $progressBar->finish();
         $this->newLine(2);
         
-        $this->info("🔓  Successfully deployed {$successCount}/{$totalCount} files securely!");
-        
-        if ($successCount === $totalCount) {
-            $this->info('🔓  SECURE DEOBFUSCATION DEPLOYMENT COMPLETE!');
-            $this->info('🔓  Client can now read and maintain all code!');
-            $this->info('🔓  Only deobfuscated versions are accessible!');
-        } else {
-            $this->warn('⚠️  Some files failed to deploy securely. Check the warnings above.');
+        $this->info("🔓  Deployment Summary:");
+        $this->info("✅  Successfully deployed: {$successCount} files");
+        if ($failedCount > 0) {
+            $this->warn("⚠️  Failed to deploy: {$failedCount} files");
         }
         
         if ($createPackage) {
@@ -205,20 +228,11 @@ class DeobfuscateSecureDeployCommand extends Command
     }
 
     /**
-     * Generate temporary output path for deobfuscated file
-     */
-    private function generateTempOutputPath(string $filePath): string
-    {
-        $pathInfo = pathinfo($filePath);
-        return $pathInfo['dirname'] . DIRECTORY_SEPARATOR . $pathInfo['filename'] . '_temp_deobfuscated.' . $pathInfo['extension'];
-    }
-
-    /**
      * Create secure backup (client cannot access)
      */
     private function createSecureBackup(string $path): string
     {
-        $secureBackupDir = storage_path('app/secure_deobfuscation_backups/' . date('Y-m-d_H-i-s'));
+        $secureBackupDir = storage_path('app/secure_deployment_backups/' . date('Y-m-d_H-i-s'));
         
         if (!File::exists($secureBackupDir)) {
             File::makeDirectory($secureBackupDir, 0750, true);
@@ -243,9 +257,9 @@ class DeobfuscateSecureDeployCommand extends Command
      */
     private function createDeploymentPackage(string $source, string $output): void
     {
-        $this->info("📦  Creating deobfuscation deployment package...");
+        $this->info("📦  Creating deployment package...");
         
-        $packageName = 'deobfuscated_deployment_' . date('Y-m-d_H-i-s') . '.zip';
+        $packageName = 'secure_deobfuscation_deployment_' . date('Y-m-d_H-i-s') . '.zip';
         $packagePath = $output . DIRECTORY_SEPARATOR . $packageName;
         
         $zip = new \ZipArchive();
@@ -253,7 +267,7 @@ class DeobfuscateSecureDeployCommand extends Command
             $this->addToZip($zip, $source, basename($source));
             $zip->close();
             
-            $this->info("📦  Deobfuscation deployment package created: {$packagePath}");
+            $this->info("📦  Deployment package created: {$packagePath}");
             $this->info("🔓  This package contains readable, maintainable code!");
             $this->info("🔓  Clients can now understand and modify the application!");
         } else {

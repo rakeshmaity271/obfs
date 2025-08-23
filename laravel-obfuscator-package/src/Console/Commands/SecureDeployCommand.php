@@ -12,11 +12,12 @@ class SecureDeployCommand extends Command
      * The name and signature of the console command.
      */
     protected $signature = 'obfuscate:secure-deploy 
-                            {source : Source directory or file to deploy}
+                            {source? : Source directory or file to deploy (defaults to current directory)}
                             {--output= : Output directory for deployment package}
                             {--exclude=* : Files/directories to exclude from obfuscation}
                             {--level=enterprise : Obfuscation level (basic, advanced, enterprise)}
-                            {--create-package : Create a deployment package (ZIP file)}';
+                            {--create-package : Create a deployment package (ZIP file)}
+                            {--app-only : Deploy only the application (exclude vendor, node_modules, etc.)}';
 
     /**
      * The console command description.
@@ -28,11 +29,12 @@ class SecureDeployCommand extends Command
      */
     public function handle(ObfuscatorService $obfuscator): int
     {
-        $source = $this->argument('source');
+        $source = $this->argument('source') ?: getcwd();
         $output = $this->option('output');
         $exclude = $this->option('exclude');
         $level = $this->option('level');
         $createPackage = $this->option('create-package');
+        $appOnly = $this->option('app-only');
 
         if (!file_exists($source)) {
             $this->error("Source not found: {$source}");
@@ -48,9 +50,32 @@ class SecureDeployCommand extends Command
             return Command::FAILURE;
         }
 
+        // Set default exclusions for Laravel applications
+        if ($appOnly || empty($exclude)) {
+            $defaultExclusions = [
+                'vendor',
+                'node_modules',
+                'storage/logs',
+                'storage/framework/cache',
+                'storage/framework/sessions',
+                'storage/framework/views',
+                '.git',
+                '.env',
+                'composer.lock',
+                'package-lock.json',
+                'yarn.lock',
+                'npm-debug.log',
+                '.DS_Store',
+                'Thumbs.db'
+            ];
+            $exclude = array_merge($exclude, $defaultExclusions);
+        }
+
         $this->warn('🔒  SECURE DEPLOYMENT PACKAGE CREATION');
         $this->warn('🔒  This will create a client-ready package with NO original source code!');
         $this->warn('🔒  Original files will be moved to SECURE backup location.');
+        $this->info("🔒  Source: {$source}");
+        $this->info("🔒  Excluding: " . implode(', ', $exclude));
         
         if (!$this->confirm('Are you ready to create a secure deployment package?')) {
             $this->info('Secure deployment cancelled.');
@@ -124,25 +149,41 @@ class SecureDeployCommand extends Command
         $phpFiles = $this->getPhpFiles($source, $exclude);
         $this->info("🔒  Found " . count($phpFiles) . " PHP files to obfuscate");
         
+        if (empty($phpFiles)) {
+            $this->warn("⚠️  No PHP files found to obfuscate!");
+            return Command::SUCCESS;
+        }
+
         $successCount = 0;
+        $failedCount = 0;
+        
+        $progressBar = $this->output->createProgressBar(count($phpFiles));
+        $progressBar->start();
+        
         foreach ($phpFiles as $file) {
             try {
-                $this->info("🔒  Obfuscating: {$file}");
                 $obfuscatedPath = $obfuscator->obfuscateFile($file, null, $level);
                 
                 // Replace original with obfuscated
                 if (rename($obfuscatedPath, $file)) {
                     $successCount++;
-                    $this->info("✅  {$file} obfuscated and replaced");
                 } else {
-                    $this->warn("⚠️  Failed to replace: {$file}");
+                    $failedCount++;
                 }
             } catch (\Exception $e) {
-                $this->warn("⚠️  Failed to obfuscate: {$file} - {$e->getMessage()}");
+                $failedCount++;
             }
+            $progressBar->advance();
         }
         
-        $this->info("🔒  Successfully deployed {$successCount} files securely!");
+        $progressBar->finish();
+        $this->newLine(2);
+        
+        $this->info("🔒  Deployment Summary:");
+        $this->info("✅  Successfully deployed: {$successCount} files");
+        if ($failedCount > 0) {
+            $this->warn("⚠️  Failed to deploy: {$failedCount} files");
+        }
         
         if ($createPackage) {
             $this->createDeploymentPackage($source, $output);
