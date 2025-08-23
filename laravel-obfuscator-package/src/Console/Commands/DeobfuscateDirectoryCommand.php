@@ -11,7 +11,10 @@ class DeobfuscateDirectoryCommand extends Command
     /**
      * The name and signature of the console command.
      */
-    protected $signature = 'deobfuscate:directory {directory : The directory to deobfuscate} {--output-dir= : Output directory for deobfuscated files} {--analyze : Analyze obfuscation level without deobfuscating}';
+    protected $signature = 'deobfuscate:directory 
+                            {directory : The directory to deobfuscate} 
+                            {--output-dir= : Output directory for deobfuscated files} 
+                            {--analyze : Analyze obfuscation level without deobfuscating}';
 
     /**
      * The console command description.

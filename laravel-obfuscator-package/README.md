@@ -48,24 +48,18 @@ The package provides several Artisan commands to obfuscate PHP files within your
 For **true security** when delivering to clients, use these commands:
 
 ```bash
-# Secure deploy specific file (replaces original, moves original to secure backup)
-php artisan obfuscate:file {file} --secure-deploy
-
-# Secure deploy entire project (replaces all originals, moves originals to secure backup)
-php artisan obfuscate:all --secure-deploy
-
-# Secure deploy directory (replaces originals, moves originals to secure backup)
-php artisan obfuscate:directory {directory} --secure-deploy
-
-# Create secure deployment package with ZIP file
+# Create secure deployment package with obfuscated code (replaces originals, moves originals to secure backup)
 php artisan obfuscate:secure-deploy {source} [--output=path] [--exclude=path] [--level=enterprise] [--create-package]
+
+# Create secure deobfuscation deployment package with readable code (replaces obfuscated, moves obfuscated to secure backup)
+php artisan deobfuscate:secure-deploy {source} [--output=path] [--exclude=path] [--create-package]
 ```
 
 **Why Secure Deployment?**
 - ✅ **Client cannot access original source code**
 - ✅ **Client cannot develop/modify your application**
 - ✅ **Client cannot reverse-engineer your logic**
-- ✅ **Only obfuscated code remains accessible**
+- ✅ **Only processed code remains accessible**
 
 #### **Basic Obfuscation Commands (Development Use)**
 
@@ -198,7 +192,8 @@ php artisan deobfuscate:all
 
 **Options:**
 - `--output-dir=path` - Specify output directory for all deobfuscated files
-- `--analyze` - Analyze obfuscation level without deobfuscating
+
+
 
 **Examples:**
 ```bash
@@ -382,6 +377,14 @@ For support and questions:
 - Create an issue on GitHub
 - Check the documentation
 - Review the configuration options
+
+## 📚 **Documentation**
+
+- **[Secure Deployment Commands](SECURE_DEPLOY_COMMANDS.md)** - Complete guide to all secure deployment features
+- **[Advanced Features Roadmap](../ADVANCED_FEATURES_ROADMAP.md)** - Future development plans
+- **[Laravel Testing Guide](../LARAVEL_TESTING_GUIDE.md)** - Testing and quality assurance
+- **[Phase 2 Implementation Summary](../PHASE2_IMPLEMENTATION_SUMMARY.md)** - Current implementation status
+- **[Phase 3 Future Roadmap](../PHASE3_FUTURE_ROADMAP.md)** - Long-term development roadmap
 
 ## Changelog
 
