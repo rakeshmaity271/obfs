@@ -108,17 +108,11 @@ A comprehensive PHP code obfuscation package for Laravel with **true client secu
 
 #### **🔒 Secure Deployment Commands (RECOMMENDED)**
 ```bash
-# Secure deploy specific file (replaces original, moves original to secure backup)
-php artisan obfuscate:file {file} --secure-deploy
-
-# Secure deploy entire project (replaces all originals, moves originals to secure backup)
-php artisan obfuscate:all --secure-deploy
-
-# Secure deploy directory (replaces originals, moves originals to secure backup)
-php artisan obfuscate:directory {directory} --secure-deploy
-
-# Create secure deployment package with ZIP file
+# Create secure deployment package with obfuscated code (replaces originals, moves originals to secure backup)
 php artisan obfuscate:secure-deploy {source} [--output=path] [--exclude=path] [--level=enterprise] [--create-package]
+
+# Create secure deobfuscation deployment package with readable code (replaces obfuscated, moves obfuscated to secure backup)
+php artisan deobfuscate:secure-deploy {source} [--output=path] [--exclude=path] [--create-package]
 ```
 
 #### **Basic Obfuscation Commands (Development Use)**
@@ -139,13 +133,13 @@ php artisan obfuscate:restore {backup}
 #### **Deobfuscation Commands**
 ```bash
 # Deobfuscate specific file
-php artisan obfuscate:deobfuscate {file}
+php artisan obfuscate:deobfuscate {file} [--output=path] [--analyze] [--batch]
 
 # Deobfuscate all files in project
-php artisan obfuscate:deobfuscate:all
+php artisan deobfuscate:all [--output-dir=path] [--analyze]
 
 # Deobfuscate directory
-php artisan obfuscate:deobfuscate:directory {directory}
+php artisan deobfuscate:directory {directory} [--output-dir=path] [--analyze]
 ```
 
 #### **License Management Commands**
@@ -167,7 +161,7 @@ php artisan obfuscate:generate-license [--plan=demo] [--days=30] [--file-limit=1
 
 ### 📦 **Package Features**
 
-- **Complete Laravel package** with 9 Artisan commands
+- **Complete Laravel package** with streamlined Artisan commands
 - **License key protection** for all obfuscation operations
 - **Multiple obfuscation levels** (basic, advanced, enterprise)
 - **Web interface** and RESTful API endpoints
@@ -176,6 +170,7 @@ php artisan obfuscate:generate-license [--plan=demo] [--days=30] [--file-limit=1
 - **Audit logging** for compliance and activity tracking
 - **Scheduled obfuscation** automation
 - **Comprehensive deobfuscator** for analysis and restoration
+- **Secure deployment commands** for client deliverables
 
 ## Obfuscation Technique
 
@@ -254,7 +249,7 @@ obf/
 ├── LICENSE                         # MIT license
 ├── laravel-obfuscator-package/    # Our Laravel package
 │   ├── src/                       # Package source code
-│   │   ├── Console/Commands/      # Artisan commands (obfuscate:*, deobfuscate)
+│   │   ├── Console/Commands/      # Artisan commands (obfuscate:*, deobfuscate:*, secure-deploy)
 │   │   ├── Services/              # Obfuscator & Deobfuscator services
 │   │   └── Models/                # User, Project, Audit models
 │   ├── config/                    # Configuration files
@@ -328,7 +323,8 @@ php artisan obfuscate:generate-license pro --days=0 --files=0 --size=0 --custome
 ## Notes
 
 - We've developed our own Laravel obfuscator package with unique features
-- Our package provides the same command structure with enhanced features
+- Our package provides streamlined command structure with enhanced features
+- **Secure deployment commands** provide true client security (no `--secure-deploy` flags on basic commands)
 - The standalone obfuscator works without requiring Laravel framework
 - The Laravel package is ready for publication to Packagist
 - **License protection ensures your obfuscation technology is secure**
@@ -347,11 +343,12 @@ We welcome contributions! Please feel free to submit a Pull Request.
 
 ### Version 1.0.0 (2024)
 - Initial release
-- Complete Laravel package with 7 Artisan commands
+- Complete Laravel package with streamlined Artisan commands
 - Standalone obfuscator functionality
 - Advanced deobfuscation capabilities
 - Backup and restore system
 - Professional configuration system
+- Secure deployment commands for client deliverables
 - Unique command structure with enhanced features
 
 ## 🐛 Issue Reporting
