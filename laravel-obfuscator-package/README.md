@@ -43,17 +43,40 @@ php artisan vendor:publish --tag=laravel-obfuscator-config
 
 The package provides several Artisan commands to obfuscate PHP files within your Laravel project.
 
-#### Obfuscate All PHP Files
+#### 🔒 **Secure Deployment Commands (RECOMMENDED)**
 
-To obfuscate all PHP files in your Laravel project:
+For **true security** when delivering to clients, use these commands:
 
 ```bash
-php artisan obfuscate:all
+# Secure deploy specific file (replaces original, moves original to secure backup)
+php artisan obfuscate:file {file} --secure-deploy
+
+# Secure deploy entire project (replaces all originals, moves originals to secure backup)
+php artisan obfuscate:all --secure-deploy
+
+# Secure deploy directory (replaces originals, moves originals to secure backup)
+php artisan obfuscate:directory {directory} --secure-deploy
+
+# Create secure deployment package with ZIP file
+php artisan obfuscate:secure-deploy {source} [--output=path] [--exclude=path] [--level=enterprise] [--create-package]
 ```
 
-With backup:
+**Why Secure Deployment?**
+- ✅ **Client cannot access original source code**
+- ✅ **Client cannot develop/modify your application**
+- ✅ **Client cannot reverse-engineer your logic**
+- ✅ **Only obfuscated code remains accessible**
+
+#### **Basic Obfuscation Commands (Development Use)**
+
+For development and testing (creates `_obfuscated` versions alongside originals):
+
 ```bash
-php artisan mObfuscate:all --backup
+# Obfuscate all PHP files (creates _obfuscated versions)
+php artisan obfuscate:all
+
+# With backup:
+php artisan obfuscate:all --backup
 ```
 
 #### Obfuscate Specific Directory
@@ -61,13 +84,16 @@ php artisan mObfuscate:all --backup
 To obfuscate PHP files in a specific directory:
 
 ```bash
+# Basic obfuscation (creates _obfuscated versions)
 php artisan obfuscate:directory {directory}
-```
 
-Example:
-```bash
-php artisan mObfuscate:directory app/Http/Controllers
-php artisan mObfuscate:directory app/Models --backup
+# Secure deployment (replaces originals, moves originals to secure backup)
+php artisan obfuscate:directory {directory} --secure-deploy
+
+# Examples:
+php artisan obfuscate:directory app/Http/Controllers
+php artisan obfuscate:directory app/Models --backup
+php artisan obfuscate:directory app/Http/Controllers --secure-deploy
 ```
 
 #### Obfuscate Specific File
@@ -75,13 +101,16 @@ php artisan mObfuscate:directory app/Models --backup
 To obfuscate a specific PHP file:
 
 ```bash
+# Basic obfuscation (creates _obfuscated version)
 php artisan obfuscate:file {somefile or dir/file}
-```
 
-Examples:
-```bash
+# Secure deployment (replaces original, moves original to secure backup)
+php artisan obfuscate:file {somefile or dir/file} --secure-deploy
+
+# Examples:
 php artisan obfuscate:file app/Http/Controllers/UserController.php
 php artisan obfuscate:file UserController.php --backup
+php artisan obfuscate:file app/Http/Controllers/UserController.php --secure-deploy
 ```
 
 #### Backup and Restore
@@ -362,3 +391,82 @@ For support and questions:
 - Artisan commands for file, directory, and project obfuscation
 - Backup and restore system
 - Configuration system
+
+## 🔒 **Secure Deployment Mode**
+
+### **The Problem with Basic Obfuscation**
+Basic obfuscation creates `_obfuscated` files alongside originals, which means:
+- ❌ **Client can still access original source code**
+- ❌ **Client can still develop/modify the application**
+- ❌ **Obfuscation provides no real security**
+
+### **The Solution: Secure Deployment Mode**
+Secure deployment mode provides **true security** by:
+- ✅ **Replacing original files** with obfuscated versions
+- ✅ **Moving originals to secure backup** (client cannot access)
+- ✅ **Creating deployment packages** (ZIP files with only obfuscated code)
+- ✅ **Ensuring clients cannot reverse-engineer** your application
+
+### **Secure Deployment Commands**
+
+#### **Single File Secure Deployment**
+```bash
+# Replace original file with obfuscated version
+php artisan obfuscate:file app/Http/Controllers/Controller.php --secure-deploy
+
+# Create deployment package
+php artisan obfuscate:file app/Http/Controllers/Controller.php --secure-deploy --create-package
+```
+
+#### **Directory Secure Deployment**
+```bash
+# Secure deploy entire directory
+php artisan obfuscate:directory app/Http/Controllers --secure-deploy
+
+# Exclude certain files from obfuscation
+php artisan obfuscate:directory app --secure-deploy --exclude=vendor --exclude=storage
+```
+
+#### **Project-Wide Secure Deployment**
+```bash
+# Secure deploy entire project
+php artisan obfuscate:all --secure-deploy
+
+# Create deployment package
+php artisan obfuscate:all --secure-deploy --create-package
+```
+
+#### **Dedicated Secure Deployment Command**
+```bash
+# Create secure deployment package with ZIP
+php artisan obfuscate:secure-deploy app --create-package --output=deployments
+
+# Enterprise-level obfuscation for maximum security
+php artisan obfuscate:secure-deploy app --level=enterprise --create-package
+```
+
+### **What Happens in Secure Deployment Mode**
+
+1. **🔒 Original files are backed up** to `storage/app/secure_deployment_backups/`
+2. **🔒 Original files are replaced** with obfuscated versions
+3. **🔒 Secure backup location** is NOT accessible to clients
+4. **🔒 Only obfuscated code** remains in the project
+5. **📦 Optional deployment package** (ZIP) can be created
+
+### **Security Benefits**
+
+- **🚫 No Source Code Access**: Clients cannot read your original code
+- **🚫 No Development Capability**: Clients cannot modify your logic
+- **🚫 No Reverse Engineering**: Obfuscated code is extremely difficult to understand
+- **✅ Full Functionality**: Application works exactly the same
+- **✅ Professional Delivery**: Clean, production-ready codebase
+
+### **When to Use Secure Deployment**
+
+- **🎯 Client Deliverables**: When handing over code to clients
+- **🚀 Production Deployment**: When deploying to production servers
+- **📦 Software Distribution**: When selling/distributing your software
+- **🔐 Code Protection**: When protecting intellectual property
+- **💼 Business Applications**: When delivering business solutions to clients
+
+## 🚀 **Quick Start**

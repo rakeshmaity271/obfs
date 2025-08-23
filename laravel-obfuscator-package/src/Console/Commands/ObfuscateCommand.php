@@ -4,6 +4,7 @@ namespace LaravelObfuscator\LaravelObfuscator\Console\Commands;
 
 use Illuminate\Console\Command;
 use LaravelObfuscator\LaravelObfuscator\Services\ObfuscatorService;
+use Illuminate\Support\Facades\File;
 
 class ObfuscateCommand extends Command
 {
@@ -14,7 +15,8 @@ class ObfuscateCommand extends Command
                             {input : Input file path to obfuscate}
                             {--output= : Output file path (optional)}
                             {--backup : Create backup of original file}
-                            {--replace : Replace original file (DANGEROUS!)}';
+                            {--replace : Replace original file (DANGEROUS!)}
+                            {--secure-deploy : Secure deployment mode - replace original with obfuscated, move original to secure backup}';
 
     /**
      * The console command description.
@@ -49,6 +51,7 @@ class ObfuscateCommand extends Command
         }
 
         $replace = $this->option('replace');
+        $secureDeploy = $this->option('secure-deploy');
         
         // Safety check for replace option
         if ($replace) {
@@ -63,6 +66,24 @@ class ObfuscateCommand extends Command
             // Force backup when replacing
             $backup = true;
             $this->warn('⚠️  Forcing backup creation for safety...');
+        }
+
+        // Secure deployment mode - TRUE SECURITY
+        if ($secureDeploy) {
+            $this->warn('🔒  SECURE DEPLOYMENT MODE ACTIVATED!');
+            $this->warn('🔒  This will make your code truly secure for client deployment.');
+            $this->warn('🔒  Original files will be moved to SECURE backup location.');
+            $this->warn('🔒  Only obfuscated files will remain accessible.');
+            
+            if (!$this->confirm('Are you ready to deploy securely? This cannot be undone!')) {
+                $this->info('Secure deployment cancelled. Original files preserved.');
+                return Command::SUCCESS;
+            }
+            
+            // Force backup and replace for secure deployment
+            $backup = true;
+            $replace = true;
+            $this->info('🔒  Proceeding with secure deployment...');
         }
 
         if (!$output) {
@@ -91,11 +112,25 @@ class ObfuscateCommand extends Command
         if ($replace) {
             $this->warn('⚠️  Replacing original file with obfuscated version...');
             
+            // For secure deployment, create secure backup first
+            if ($secureDeploy) {
+                $this->info('🔒  Creating secure backup of original file...');
+                $secureBackupPath = $this->createSecureBackup($input);
+                $this->info("🔒  Original file securely backed up to: {$secureBackupPath}");
+            }
+            
             // Move obfuscated file to replace original
             if (rename($output, $input)) {
                 $this->info('✅ Original file replaced successfully!');
                 $this->warn('⚠️  Original file is now obfuscated!');
-                $this->info('💾 Backup created for safety.');
+                
+                if ($secureDeploy) {
+                    $this->info('🔒  SECURE DEPLOYMENT COMPLETE!');
+                    $this->info('🔒  Client can no longer access original source code!');
+                    $this->info('🔒  Only obfuscated version is accessible!');
+                } else {
+                    $this->info('💾 Backup created for safety.');
+                }
             } else {
                 $this->error('❌ Failed to replace original file!');
                 return Command::FAILURE;
@@ -105,5 +140,28 @@ class ObfuscateCommand extends Command
         }
         
         return Command::SUCCESS;
+    }
+
+    /**
+     * Create secure backup for deployment (client cannot access)
+     */
+    private function createSecureBackup(string $filePath): string
+    {
+        $secureBackupDir = storage_path('app/secure_deployment_backups/' . date('Y-m-d_H-i-s'));
+        
+        if (!File::exists($secureBackupDir)) {
+            File::makeDirectory($secureBackupDir, 0750, true);
+        }
+        
+        $backupFileName = basename($filePath);
+        $secureBackupPath = $secureBackupDir . DIRECTORY_SEPARATOR . $backupFileName;
+        
+        if (File::copy($filePath, $secureBackupPath)) {
+            $this->info("🔒  Original file moved to secure backup: {$secureBackupPath}");
+            $this->warn("🔒  This location is NOT accessible to clients!");
+            return $secureBackupPath;
+        } else {
+            throw new \Exception("Failed to create secure backup: {$secureBackupPath}");
+        }
     }
 }

@@ -16,6 +16,7 @@ use LaravelObfuscator\LaravelObfuscator\Console\Commands\DeobfuscateDirectoryCom
 use LaravelObfuscator\LaravelObfuscator\Console\Commands\ScheduledObfuscationCommand;
 use LaravelObfuscator\LaravelObfuscator\Console\Commands\LicenseCommand;
 use LaravelObfuscator\LaravelObfuscator\Console\Commands\GenerateLicenseCommand;
+use LaravelObfuscator\LaravelObfuscator\Console\Commands\SecureDeployCommand;
 
 class LaravelObfuscatorServiceProvider extends ServiceProvider
 {
@@ -63,6 +64,7 @@ class LaravelObfuscatorServiceProvider extends ServiceProvider
                 ScheduledObfuscationCommand::class, // obfuscate:scheduled
                 LicenseCommand::class,              // obfuscate:license
                 GenerateLicenseCommand::class,      // obfuscate:generate-license
+                SecureDeployCommand::class,
             ]);
         }
         

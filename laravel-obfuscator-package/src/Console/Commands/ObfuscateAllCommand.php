@@ -10,7 +10,10 @@ class ObfuscateAllCommand extends Command
     /**
      * The name and signature of the console command.
      */
-    protected $signature = 'obfuscate:all {--backup : Create backup of original files} {--replace : Replace original files (DANGEROUS!)}';
+    protected $signature = 'obfuscate:all 
+                            {--backup : Create backup of original files}
+                            {--replace : Replace original files (DANGEROUS!)}
+                            {--secure-deploy : Secure deployment mode - replace originals with obfuscated, move originals to secure backup}';
 
     /**
      * The console command description.
